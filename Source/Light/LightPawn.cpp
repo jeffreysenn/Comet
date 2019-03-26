@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "LightPawn.h"
+
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -8,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/World.h"
 #include "Engine/StaticMesh.h"
+#include "LightPlayerController.h"
 
 ALightPawn::ALightPawn()
 {
@@ -42,7 +44,6 @@ ALightPawn::ALightPawn()
 
 	// Set handling parameters
 	Acceleration = 500.f;
-	TurnSpeed = 50.f;
 	MaxSpeed = 4000.f;
 	MinSpeed = 500.f;
 	CurrentForwardSpeed = 500.f;
@@ -50,6 +51,9 @@ ALightPawn::ALightPawn()
 
 void ALightPawn::Tick(float DeltaSeconds)
 {
+	// Call any parent class Tick implementation
+	Super::Tick(DeltaSeconds);
+
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f);
 
 	// Move plan forwards (with sweep so we stop when we collide with things)
@@ -64,8 +68,6 @@ void ALightPawn::Tick(float DeltaSeconds)
 	// Rotate plane
 	AddActorLocalRotation(DeltaRotation);
 
-	// Call any parent class Tick implementation
-	Super::Tick(DeltaSeconds);
 }
 
 void ALightPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
@@ -77,6 +79,16 @@ void ALightPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 	SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.025f));
 }
 
+
+void ALightPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (Controller)
+	{
+		PlayerController = Cast<ALightPlayerController>(Controller);
+	}
+}
 
 void ALightPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -104,7 +116,7 @@ void ALightPawn::ThrustInput(float Val)
 void ALightPawn::MoveUpInput(float Val)
 {
 	// Target pitch speed is based in input
-	float TargetPitchSpeed = (Val * TurnSpeed * -1.f);
+	float TargetPitchSpeed = (Val * PitchSpeed * -1.f);
 
 	// When steering, we decrease pitch slightly
 	TargetPitchSpeed += (FMath::Abs(CurrentYawSpeed) * -0.2f);
@@ -116,7 +128,7 @@ void ALightPawn::MoveUpInput(float Val)
 void ALightPawn::MoveRightInput(float Val)
 {
 	// Target yaw speed is based on input
-	float TargetYawSpeed = (Val * TurnSpeed);
+	float TargetYawSpeed = (Val * YawSpeed);
 
 	// Smoothly interpolate to target yaw speed
 	CurrentYawSpeed = FMath::FInterpTo(CurrentYawSpeed, TargetYawSpeed, GetWorld()->GetDeltaSeconds(), 2.f);

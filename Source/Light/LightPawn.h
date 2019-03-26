@@ -10,6 +10,7 @@ class ALightPawn : public APawn
 {
 	GENERATED_BODY()
 
+public:
 	/** StaticMesh component that will be the visuals for our flying pawn */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* PlaneMesh;
@@ -21,6 +22,8 @@ class ALightPawn : public APawn
 	/** Camera component that will be our viewpoint */
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
+
+	class ALightPlayerController* PlayerController;
 public:
 	ALightPawn();
 
@@ -30,6 +33,8 @@ public:
 	// End AActor overrides
 
 protected:
+
+	virtual void BeginPlay() override;
 
 	// Begin APawn overrides
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override; // Allows binding actions/axes to functions
@@ -48,19 +53,22 @@ private:
 
 	/** How quickly forward speed changes */
 	UPROPERTY(Category=Plane, EditAnywhere)
-	float Acceleration;
+	float Acceleration = 800;
 
 	/** How quickly pawn can steer */
 	UPROPERTY(Category=Plane, EditAnywhere)
-	float TurnSpeed;
+	float YawSpeed = 80;
+
+	UPROPERTY(Category=Plane, EditAnywhere)
+	float PitchSpeed = 80;
 
 	/** Max forward speed */
 	UPROPERTY(Category = Pitch, EditAnywhere)
-	float MaxSpeed;
+	float MaxSpeed = 5000;
 
 	/** Min forward speed */
 	UPROPERTY(Category=Yaw, EditAnywhere)
-	float MinSpeed;
+	float MinSpeed = 50;
 
 	/** Current forward speed */
 	float CurrentForwardSpeed;
