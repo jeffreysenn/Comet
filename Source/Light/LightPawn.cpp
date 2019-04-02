@@ -99,6 +99,8 @@ void ALightPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Thrust", this, &ALightPawn::ThrustInput);
 	PlayerInputComponent->BindAxis("MoveUp", this, &ALightPawn::MoveUpInput);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALightPawn::MoveRightInput);
+	PlayerInputComponent->BindAxis("ThrustX", this, &ALightPawn::MoveRightInput);
+
 }
 
 void ALightPawn::ThrustInput(float Val)
