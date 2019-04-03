@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "LightPlayerController.generated.h"
+#include "CometPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class LIGHT_API ALightPlayerController : public APlayerController
+class ACometPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	

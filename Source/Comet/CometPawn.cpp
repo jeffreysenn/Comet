@@ -1,6 +1,6 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
-#include "LightPawn.h"
+#include "CometPawn.h"
 
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -9,9 +9,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/World.h"
 #include "Engine/StaticMesh.h"
-#include "LightPlayerController.h"
+#include "CometPlayerController.h"
 
-ALightPawn::ALightPawn()
+ACometPawn::ACometPawn()
 {
 	// Structure to hold one-time initialization
 	struct FConstructorStatics
@@ -49,7 +49,7 @@ ALightPawn::ALightPawn()
 	CurrentForwardSpeed = 500.f;
 }
 
-void ALightPawn::Tick(float DeltaSeconds)
+void ACometPawn::Tick(float DeltaSeconds)
 {
 	// Call any parent class Tick implementation
 	Super::Tick(DeltaSeconds);
@@ -70,7 +70,7 @@ void ALightPawn::Tick(float DeltaSeconds)
 
 }
 
-void ALightPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
@@ -80,30 +80,30 @@ void ALightPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 }
 
 
-void ALightPawn::BeginPlay()
+void ACometPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
 	if (Controller)
 	{
-		PlayerController = Cast<ALightPlayerController>(Controller);
+		PlayerController = Cast<ACometPlayerController>(Controller);
 	}
 }
 
-void ALightPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
     // Check if PlayerInputComponent is valid (not NULL)
 	check(PlayerInputComponent);
 
 	// Bind our control axis' to callback functions
-	PlayerInputComponent->BindAxis("Thrust", this, &ALightPawn::ThrustInput);
-	PlayerInputComponent->BindAxis("MoveUp", this, &ALightPawn::MoveUpInput);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ALightPawn::MoveRightInput);
-	PlayerInputComponent->BindAxis("ThrustX", this, &ALightPawn::MoveRightInput);
+	PlayerInputComponent->BindAxis("Thrust", this, &ACometPawn::ThrustInput);
+	PlayerInputComponent->BindAxis("MoveUp", this, &ACometPawn::MoveUpInput);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
+	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::MoveRightInput);
 
 }
 
-void ALightPawn::ThrustInput(float Val)
+void ACometPawn::ThrustInput(float Val)
 {
 	// Is there any input?
 	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
@@ -115,19 +115,19 @@ void ALightPawn::ThrustInput(float Val)
 	CurrentForwardSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
 }
 
-void ALightPawn::MoveUpInput(float Val)
+void ACometPawn::MoveUpInput(float Val)
 {
 	// Target pitch speed is based in input
 	float TargetPitchSpeed = (Val * PitchSpeed * -1.f);
 
-	// When steering, we decrease pitch slightly
+	// When steering, we decrease pitch sCometly
 	TargetPitchSpeed += (FMath::Abs(CurrentYawSpeed) * -0.2f);
 
 	// Smoothly interpolate to target pitch speed
 	CurrentPitchSpeed = FMath::FInterpTo(CurrentPitchSpeed, TargetPitchSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
 }
 
-void ALightPawn::MoveRightInput(float Val)
+void ACometPawn::MoveRightInput(float Val)
 {
 	// Target yaw speed is based on input
 	float TargetYawSpeed = (Val * YawSpeed);

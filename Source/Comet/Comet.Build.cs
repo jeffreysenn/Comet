@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Light : ModuleRules
+public class Comet : ModuleRules
 {
-	public Light(ReadOnlyTargetRules Target) : base(Target)
+	public Comet(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 

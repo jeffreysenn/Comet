@@ -1,8 +1,8 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
-#include "Light.h"
+#include "Comet.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, Light, "Light");
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, Comet, "Comet");
 
 DEFINE_LOG_CATEGORY(LogFlying)

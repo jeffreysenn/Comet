@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "LightPawn.generated.h"
+#include "CometPawn.generated.h"
 
 UCLASS(Config=Game)
-class ALightPawn : public APawn
+class ACometPawn : public APawn
 {
 	GENERATED_BODY()
 
@@ -23,9 +23,9 @@ public:
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
-	class ALightPlayerController* PlayerController;
+	class ACometPlayerController* PlayerController;
 public:
-	ALightPawn();
+	ACometPawn();
 
 	// Begin AActor overrides
 	virtual void Tick(float DeltaSeconds) override;

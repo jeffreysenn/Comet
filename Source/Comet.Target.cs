@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class LightTarget : TargetRules
+public class CometTarget : TargetRules
 {
-	public LightTarget(TargetInfo Target) : base(Target)
+	public CometTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		ExtraModuleNames.Add("Light");
+		ExtraModuleNames.Add("Comet");
 	}
 }
