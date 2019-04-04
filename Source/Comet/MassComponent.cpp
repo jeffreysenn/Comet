@@ -29,6 +29,7 @@ void UMassComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	GainMass(-MassLostPerSecond * DeltaTime);
+
 }
 
 void UMassComponent::GainMass(float DeltaMass)
