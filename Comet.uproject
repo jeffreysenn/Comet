@@ -8,9 +8,10 @@
 			"Name": "Comet",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
+      "AdditionalDependencies": [
+        "Engine",
+        "ProceduralMeshComponent"
+      ]
 		}
 	]
 }
