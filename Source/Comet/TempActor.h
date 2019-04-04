@@ -15,7 +15,9 @@ class COMET_API ATempActor : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ATempActor();
-
+public:
+	UPROPERTY(EditAnywhere, Category = "Test")
+	bool bShouldAddVertice = false;
 protected:
 	 //Called when the game starts or when spawned
 	virtual void BeginPlay() override;
