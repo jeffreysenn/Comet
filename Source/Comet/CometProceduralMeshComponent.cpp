@@ -3,11 +3,35 @@
 #include "CometProceduralMeshComponent.h"
 
 
-void UCometProceduralMeshComponent::SomeFunction() 
+void UCometProceduralMeshComponent::GenerateCube() 
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hello world, i dont know what im doing :("));
-	GenerateCubeMesh();
-	
+	//UE_LOG(LogTemp, Warning, TEXT("cube was generated"));
+	GenerateCubeMesh(100);	
+}
+
+void UCometProceduralMeshComponent::ResizeGrowth(int32 dustNum)
+{
+	for (int32 index = 0; index < Triangles.Num(); index++)
+	{
+		Triangles[index] += dustNum;//FVector(dustNum, dustNum, dustNum);
+	}
+	UpdateMeshSection(0, Vertices, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>());
+}
+
+void UCometProceduralMeshComponent::ResizeShrink(int32 dustNum) //could also merge these functions together because then we could a bool or something for Bis_shrinking = true;
+{
+	for (int32 index = 0; index < Vertices.Num(); index++)
+	{
+		//moving each vertex 1 unit //TODO: rename this function
+		Vertices[index] -= FVector(dustNum, dustNum, dustNum); 
+	}
+	CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
+}
+
+void UCometProceduralMeshComponent::addCube(int32 location) //size relative to the actor/pawn
+{
+	GenerateCubeMesh(location);
+	//UE_LOG(LogTemp, Warning, TEXT("new cube was generated"));
 }
 
 void UCometProceduralMeshComponent::AddTriangle(int32 V1, int32 V2, int32 V3)
@@ -17,21 +41,22 @@ void UCometProceduralMeshComponent::AddTriangle(int32 V1, int32 V2, int32 V3)
 	Triangles.Add(V3);
 }
 
-void UCometProceduralMeshComponent::GenerateCubeMesh()
+void UCometProceduralMeshComponent::GenerateCubeMesh(int32 location)
 {
 	//6 sides on cube, 4 verts each (corners)
 
-	//These are relative locations to the placed Actor in the world
-	Vertices.Add(FVector(0, -100, 0)); //lower left - 0
-	Vertices.Add(FVector(0, -100, 100)); //upper left - 1
-	Vertices.Add(FVector(0, 100, 0)); //lower right - 2 
-	Vertices.Add(FVector(0, 100, 100)); //upper right - 3
+	//These are relative locations to the placed Actor in the world aka size
+	Vertices.Add(FVector(0, -location, 0)); //lower left - 0
+	Vertices.Add(FVector(0, -location, location)); //upper left - 1
 
-	Vertices.Add(FVector(100, -100, 0)); //lower front left - 4
-	Vertices.Add(FVector(100, -100, 100)); //upper front left - 5
+	Vertices.Add(FVector(0, location, 0)); //lower right - 2 
+	Vertices.Add(FVector(0, location, location)); //upper right - 3
 
-	Vertices.Add(FVector(100, 100, 100)); //upper front right - 6
-	Vertices.Add(FVector(100, 100, 0)); //lower front right - 7
+	Vertices.Add(FVector(location, -location, 0)); //lower front left - 4
+	Vertices.Add(FVector(location, -location, location)); //upper front left - 5
+
+	Vertices.Add(FVector(location, location, location)); //upper front right - 6
+	Vertices.Add(FVector(location, location, 0)); //lower front right - 7
 
 	//Back face of cube
 	AddTriangle(0, 2, 3);
@@ -57,7 +82,7 @@ void UCometProceduralMeshComponent::GenerateCubeMesh()
 	AddTriangle(2, 0, 4);
 	AddTriangle(4, 7, 2);
 
-	TArray<FLinearColor> VertexColors;
+	
 	VertexColors.Add(FLinearColor(0.f, 0.f, 1.f));
 	VertexColors.Add(FLinearColor(1.f, 0.f, 0.f));
 	VertexColors.Add(FLinearColor(1.f, 0.f, 0.f));

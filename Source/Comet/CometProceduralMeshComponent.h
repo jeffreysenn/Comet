@@ -16,7 +16,15 @@ class COMET_API UCometProceduralMeshComponent : public UProceduralMeshComponent
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SomeFunction();
+	void GenerateCube();
+	//void GenerateShape(bool istypeCube);
+	UFUNCTION(BlueprintCallable)
+	void ResizeGrowth(int32 dustNum);
+	UFUNCTION(BlueprintCallable)
+	void ResizeShrink(int32 dustNum);
+	UFUNCTION(BlueprintCallable)
+	void addCube(int32 location);
+
 protected:
 	
 	/* The vertices of the mesh */
@@ -28,5 +36,8 @@ protected:
 	/* Creates a triangle that connects the given vertices */
 	void AddTriangle(int32 V1, int32 V2, int32 V3);
 
-	void GenerateCubeMesh();
+	void GenerateCubeMesh(int32 location);
+
+private:
+	TArray<FLinearColor> VertexColors;
 };
