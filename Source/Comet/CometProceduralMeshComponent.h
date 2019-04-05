@@ -23,6 +23,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResizeShrink(int32 dustNum);
 	UFUNCTION(BlueprintCallable)
+	void MoveRenderedObject(FVector distance);
+	UFUNCTION(BlueprintCallable)
 	void addCube(int32 location);
 
 protected:

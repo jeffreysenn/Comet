@@ -11,21 +11,46 @@ void UCometProceduralMeshComponent::GenerateCube()
 
 void UCometProceduralMeshComponent::ResizeGrowth(int32 dustNum)
 {
-	for (int32 index = 0; index < Triangles.Num(); index++)
-	{
-		Triangles[index] += dustNum;//FVector(dustNum, dustNum, dustNum);
-	}
+	//Triangles[index] += dustNum;//FVector(dustNum, dustNum, dustNum);
+	Vertices[0] += FVector(0, -dustNum, 0); //lower left - 0
+	Vertices[1] += FVector(0, -dustNum, dustNum); //upper left - 1
+
+	Vertices[2] += FVector(0, dustNum, 0); //lower right - 2 
+	Vertices[3] += FVector(0, dustNum, dustNum); //upper right - 3
+
+	Vertices[4] += FVector(dustNum, -dustNum, 0); //lower front left - 4
+	Vertices[5] += FVector(dustNum, -dustNum, dustNum); //upper front left - 5
+
+	Vertices[6] += FVector(dustNum, dustNum, dustNum); //upper front right - 6
+	Vertices[7] += FVector(dustNum, dustNum, 0); //lower front right - 7
 	UpdateMeshSection(0, Vertices, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>());
 }
 
 void UCometProceduralMeshComponent::ResizeShrink(int32 dustNum) //could also merge these functions together because then we could a bool or something for Bis_shrinking = true;
 {
+	//Triangles[index] += dustNum;//FVector(dustNum, dustNum, dustNum);
+	Vertices[0] -= FVector(0, -dustNum, 0); //lower left - 0
+	Vertices[1] -= FVector(0, -dustNum, dustNum); //upper left - 1
+
+	Vertices[2] -= FVector(0, dustNum, 0); //lower right - 2 
+	Vertices[3] -= FVector(0, dustNum, dustNum); //upper right - 3
+
+	Vertices[4] -= FVector(dustNum, -dustNum, 0); //lower front left - 4
+	Vertices[5] -= FVector(dustNum, -dustNum, dustNum); //upper front left - 5
+
+	Vertices[6] -= FVector(dustNum, dustNum, dustNum); //upper front right - 6
+	Vertices[7] -= FVector(dustNum, dustNum, 0); //lower front right - 7
+	UpdateMeshSection(0, Vertices, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>());
+}
+
+void UCometProceduralMeshComponent::MoveRenderedObject(FVector distance)
+{
+	//Moving the mesh
 	for (int32 index = 0; index < Vertices.Num(); index++)
 	{
-		//moving each vertex 1 unit //TODO: rename this function
-		Vertices[index] -= FVector(dustNum, dustNum, dustNum); 
+		Vertices[index] += distance;
 	}
-	CreateMeshSection_LinearColor(0, Vertices, Triangles, TArray<FVector>(), TArray<FVector2D>(), VertexColors, TArray<FProcMeshTangent>(), true);
+	UpdateMeshSection(0, Vertices, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>());
 }
 
 void UCometProceduralMeshComponent::addCube(int32 location) //size relative to the actor/pawn
