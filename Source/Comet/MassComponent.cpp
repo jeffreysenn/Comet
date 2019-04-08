@@ -20,6 +20,7 @@ void UMassComponent::BeginPlay()
 
 	CurrentMass = StartMass;
 	
+	LastSpawnMass = CurrentMass;
 }
 
 
@@ -30,10 +31,19 @@ void UMassComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 	GainMass(-MassLostPerSecond * DeltaTime);
 
+	if (LastSpawnMass - CurrentMass > DustSpawningMassLoss)
+	{
+		SpawnDust();
+		LastSpawnMass = CurrentMass;
+	}
 }
 
 void UMassComponent::GainMass(float DeltaMass)
 {
 	CurrentMass = FMath::Clamp(CurrentMass + DeltaMass, MinMass, MaxMass);
+	if (DeltaMass > 0)
+	{
+		LastSpawnMass = CurrentMass;
+	}
 }
 

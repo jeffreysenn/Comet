@@ -7,7 +7,7 @@
 #include "MassComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, meta=(BlueprintSpawnableComponent) )
 class COMET_API UMassComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -30,10 +30,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
 	float MassLostPerSecond = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
+	float DustSpawningMassLoss = 5;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mass")
 	float CurrentMass = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mass")
+	float LastSpawnMass = 0;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -47,5 +52,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE float GetCurrentMass() const { return CurrentMass; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnDust();
 		
 };
