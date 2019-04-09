@@ -65,6 +65,10 @@ void ACometPawn::Tick(float DeltaSeconds)
 	DeltaRotation.Yaw = CurrentYawSpeed * DeltaSeconds;
 	DeltaRotation.Roll = CurrentRollSpeed * DeltaSeconds;
 
+	if (FMath::Abs(GetActorRotation().Pitch) > MaxPitchAngle && FMath::Abs(GetActorRotation().Pitch + DeltaRotation.Pitch) > FMath::Abs(GetActorRotation().Pitch))
+	{
+		DeltaRotation.Pitch = 0;
+	}
 	// Rotate plane
 	AddActorLocalRotation(DeltaRotation);
 
@@ -119,8 +123,8 @@ void ACometPawn::MoveUpInput(float Val)
 {
 	// Target pitch speed is based in input
 	float TargetPitchSpeed = (Val * PitchSpeed * -1.f);
-
-	// When steering, we decrease pitch sCometly
+	
+	// When steering, we decrease pitch slightly
 	TargetPitchSpeed += (FMath::Abs(CurrentYawSpeed) * -0.2f);
 
 	// Smoothly interpolate to target pitch speed

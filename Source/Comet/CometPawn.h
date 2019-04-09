@@ -62,6 +62,9 @@ private:
 	UPROPERTY(Category=Plane, EditAnywhere)
 	float PitchSpeed = 90;
 
+	UPROPERTY(Category = Plane, EditAnywhere)
+	float MaxPitchAngle = 85;
+
 	/** Max forward speed */
 	UPROPERTY(Category = Pitch, EditAnywhere)
 	float MaxSpeed = 5000;
