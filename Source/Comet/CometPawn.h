@@ -57,10 +57,10 @@ private:
 
 	/** How quickly pawn can steer */
 	UPROPERTY(Category=Plane, EditAnywhere)
-	float YawSpeed = 80;
+	float YawSpeed = 90;
 
 	UPROPERTY(Category=Plane, EditAnywhere)
-	float PitchSpeed = 80;
+	float PitchSpeed = 90;
 
 	/** Max forward speed */
 	UPROPERTY(Category = Pitch, EditAnywhere)
