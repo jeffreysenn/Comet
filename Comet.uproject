@@ -8,10 +8,16 @@
 			"Name": "Comet",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "Engine",
-        "ProceduralMeshComponent"
-      ]
+			"AdditionalDependencies": [
+				"Engine",
+				"ProceduralMeshComponent"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "SoundVisualizations",
+			"Enabled": true
 		}
 	]
 }
