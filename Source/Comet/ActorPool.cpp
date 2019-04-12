@@ -14,8 +14,6 @@ AActorPool::AActorPool()
 void AActorPool::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	// InitializePoolAtSize(PoolSize);
 }
 
 TArray<AActor*> AActorPool::InitializePoolAtSize(int32 Size)
@@ -26,7 +24,6 @@ TArray<AActor*> AActorPool::InitializePoolAtSize(int32 Size)
 		for (int32 i = 0; i < Size; i++)
 		{
 			auto SpawnedActor = World->SpawnActor<AActor>(ActorObj, FVector::ZeroVector, FRotator::ZeroRotator);
-			// SetActorActive(SpawnedActor, false);
 			ActorsInPool.Add(SpawnedActor);
 		}
 
@@ -41,21 +38,23 @@ void AActorPool::Tick(float DeltaTime)
 
 }
 
-void AActorPool::ReturnToPool(AActor * ActorToReturn)
+void AActorPool::ReturnToPool(AActor* ActorToReturn)
 {
-	if (!ActorToReturn) { return; }
-	// When pool is not full, put to pool
-	if (ActorsInPool.Num() <= PoolSize)
+	if (ActorToReturn) 
 	{
-		// ActorToReturn->Reset();
-		// SetActorActive(ActorToReturn, false);
-		ActorsInPool.Add(ActorToReturn);
-		ActivatedActors.Remove(ActorToReturn);
-	}
-	// Destroy when pool is full
-	else
-	{
-		ActorToReturn->Destroy();
+		// When pool is not full, put to pool
+		if (ActorsInPool.Num() <= PoolSize)
+		{
+			DeactivateActor(ActorToReturn);
+			ActorsInPool.Add(ActorToReturn);
+			ActivatedActors.Remove(ActorToReturn);
+		}
+		// Destroy when pool is full
+		else
+		{
+			ActorToReturn->Destroy();
+		}
+	
 	}
 }
 
@@ -70,28 +69,12 @@ AActor* AActorPool::SpawnFromPool(FTransform Transform)
 		}
 	}
 	AActor* ActorToSpawn = ActorsInPool.Last();
-	ActorToSpawn->SetActorTransform(Transform);
-	// SetActorActive(ActorToSpawn, true);
-	ActorsInPool.Pop();
-	ActivatedActors.Add(ActorToSpawn);
+	if (ActorToSpawn)
+	{
+		ActorToSpawn->SetActorTransform(Transform);
+		ActivateActor(ActorToSpawn);
+		ActorsInPool.Pop();
+		ActivatedActors.Add(ActorToSpawn);
+	}
 	return ActorToSpawn;
 }
-
-void AActorPool::SetActorActive(AActor * InActor, bool bShouldActivate)
-{
-	if (!InActor) { return; }
-	//if (bShouldActivate)
-	//{
-	//	InActor->Reset();
-	//}
-	//TArray<UActorComponent*> OutComps;
-	//InActor->GetComponents(OutComps);
-	//for (auto Comp : OutComps)
-	//{
-	//	Comp->Activate(bShouldActivate);
-	//}
-	InActor->SetActorHiddenInGame(!bShouldActivate);
-	InActor->SetActorEnableCollision(bShouldActivate);
-	InActor->SetActorTickEnabled(bShouldActivate);
-}
-

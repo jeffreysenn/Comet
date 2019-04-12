@@ -44,5 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AActor* SpawnFromPool(FTransform Transform);
 
-	void SetActorActive(AActor* InActor, bool bShouldActivate);
+	UFUNCTION(BlueprintImplementableEvent)
+	void ActivateActor(AActor* Actor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void DeactivateActor(AActor* Actor);
 };
