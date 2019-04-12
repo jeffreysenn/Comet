@@ -47,6 +47,9 @@ ACometPawn::ACometPawn()
 	MaxSpeed = 4000.f;
 	MinSpeed = 500.f;
 	CurrentForwardSpeed = 500.f;
+	DashSpeed = 200.f;
+	OriginalPitch = PitchSpeed;
+	OriginalYaw = YawSpeed;
 }
 
 void ACometPawn::Tick(float DeltaSeconds)
@@ -55,9 +58,11 @@ void ACometPawn::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f);
+	const FVector LocalDash = FVector(CurrentDashSpeed * DeltaSeconds, 0.f, 0.f);
 
 	// Move plan forwards (with sweep so we stop when we collide with things)
 	AddActorLocalOffset(LocalMove, true);
+	AddActorLocalOffset(LocalDash, true);
 
 	// Calculate change in rotation this frame
 	FRotator DeltaRotation(0,0,0);
@@ -71,8 +76,6 @@ void ACometPawn::Tick(float DeltaSeconds)
 	}
 	// Rotate plane
 	AddActorLocalRotation(DeltaRotation);
-
-
 
 }
 
@@ -106,6 +109,7 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveUp", this, &ACometPawn::MoveUpInput);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
 	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::MoveRightInput);
+	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
 
 }
 
@@ -150,4 +154,37 @@ void ACometPawn::MoveRightInput(float Val)
 
 	// Smoothly interpolate roll speed
 	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
+}
+
+void ACometPawn::DashInput(float Val)
+{
+	// Is there any input?
+	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
+	float CurrentDash = 0;
+	
+	//if input was pressed
+	if (bHasInput) 
+	{
+		bIsDashing = true;
+		CurrentDash = Val * DashSpeed;
+		YawSpeed = YawDashSpeed;
+		PitchSpeed = PitchDashSpeed;
+	}
+	else
+	{
+		CurrentDash = DashSpeed * 0.f;
+		YawSpeed = OriginalYaw;
+		PitchSpeed = OriginalPitch;
+		CurrentDashSpeed = FMath::Clamp(MinSpeed, MinSpeed, MaxSpeed);
+	}
+
+	// Calculate new speed
+	float NewForwardSpeed = CurrentDashSpeed + (GetWorld()->GetDeltaSeconds() * CurrentDash);
+	// Clamp between MinSpeed and MaxSpeed
+	CurrentDashSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
+}
+
+bool ACometPawn::getIsDash()
+{
+	return bIsDashing;
 }

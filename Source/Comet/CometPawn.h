@@ -49,6 +49,9 @@ protected:
 	/** Bound to the horizontal axis */
 	void MoveRightInput(float Val);
 
+	/** Bound to the dash axis */
+	void DashInput(float Val);
+
 private:
 
 	/** How quickly forward speed changes */
@@ -73,6 +76,16 @@ private:
 	UPROPERTY(Category=Yaw, EditAnywhere)
 	float MinSpeed = 50;
 
+	/** How quickly forward dash speed is */
+	UPROPERTY(Category = Plane, EditAnywhere)
+		float DashSpeed = 200;
+
+	/** How sensitive the comet moves sideways */
+	UPROPERTY(Category = Plane, EditAnywhere)
+		float PitchDashSpeed = 110;
+	UPROPERTY(Category = Plane, EditAnywhere)
+		float YawDashSpeed = 110;
+
 	/** Current forward speed */
 	float CurrentForwardSpeed;
 
@@ -84,6 +97,20 @@ private:
 
 	/** Current roll speed */
 	float CurrentRollSpeed;
+
+	/*Current Dash Speed*/
+	float CurrentDashSpeed;
+
+	/*Saving original yaw and pitch speeds for the dash input*/
+	float OriginalPitch;
+	float OriginalYaw;
+	
+	/*just to test some stuff*/
+	bool bIsDashing;
+
+	/* setting the dash time and editing in blueprint*/
+	UFUNCTION(BlueprintCallable)
+		bool getIsDash();
 
 public:
 	/** Returns PlaneMesh subobject **/
