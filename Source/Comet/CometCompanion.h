@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MoodComponent.h"
 #include "CometCompanion.generated.h"
 
 UCLASS()
@@ -18,9 +19,8 @@ public:
 public:
 	bool bIsFree = false;
 
-//private:
-//	class ACometPawn* CometPawn;
-//	class UMoodComponent* MoodComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMoodEnum MoodType;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,9 +29,13 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnSetFree(AActor* Liberator);
 
+	UFUNCTION(BlueprintCallable)
+	class UMoodComponent* FindLiberatorMoodComp(AActor* Liberator);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetCometCompanionFree(AActor* Liberator);
 };

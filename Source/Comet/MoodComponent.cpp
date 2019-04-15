@@ -9,10 +9,6 @@ UMoodComponent::UMoodComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	//Moods.Add(FMoodStruct::FMoodStruct("Red"));
-	//Moods.Add(FMoodStruct::FMoodStruct("Green"));
-	//Moods.Add(FMoodStruct::FMoodStruct("Blue"));
-
 	MoodMap.Add(EMoodEnum::ME_Type0, false);
 	MoodMap.Add(EMoodEnum::ME_Type1, false);
 	MoodMap.Add(EMoodEnum::ME_Type2, false);
@@ -25,7 +21,7 @@ void UMoodComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MoodMap[EMoodEnum::ME_Type0] = true;
+	//MoodMap[EMoodEnum::ME_Type0] = true;
 	
 }
 
@@ -45,5 +41,13 @@ bool UMoodComponent::HasMoodType(EMoodEnum MoodType) const
 		return MoodMap[MoodType];
 	}
 	return false;
+}
+
+void UMoodComponent::SetMoodTypeBool(EMoodEnum MoodType, bool bHasMood = true)
+{
+	if (MoodMap.Contains(MoodType))
+	{
+		MoodMap[MoodType] = bHasMood;
+	}
 }
 

@@ -3,8 +3,6 @@
 #include "CometCompanion.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "CometPawn.h"
-#include "MoodComponent.h"
 
 // Sets default values
 ACometCompanion::ACometCompanion()
@@ -18,17 +16,16 @@ ACometCompanion::ACometCompanion()
 void ACometCompanion::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
 
-		//auto PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-		//if (PlayerPawn)
-		//{
-		//	CometPawn = Cast<ACometPawn>(PlayerPawn);
-		//	if (CometPawn)
-		//	{
-		//		MoodComp = Cast<UMoodComponent>(CometPawn->GetComponentByClass(UMoodComponent::StaticClass()));
-		//	}
-		//}
+UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
+{
+	if (Liberator)
+	{
+		return Liberator->FindComponentByClass<UMoodComponent>();
+	}
+
+	return nullptr;
 }
 
 // Called every frame
@@ -40,6 +37,7 @@ void ACometCompanion::Tick(float DeltaTime)
 
 void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 {
+	bIsFree = true;
 	OnSetFree(Liberator);
 }
 
