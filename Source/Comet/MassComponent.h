@@ -19,10 +19,10 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
-	float MaxMass = 10000;
+	float MaxMass = 1000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
-	float MinMass = 1;
+	float MinMass = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
 	float StartMass = 100;
