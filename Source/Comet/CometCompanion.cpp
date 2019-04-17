@@ -37,6 +37,7 @@ void ACometCompanion::Tick(float DeltaTime)
 
 void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 {
+	if (bIsFree) { return; }
 	bIsFree = true;
 	OnSetFree(Liberator);
 }
