@@ -6,7 +6,7 @@
 #include "CometPawn.generated.h"
 
 UCLASS(Config=Game)
-class ACometPawn : public APawn
+class COMET_API ACometPawn : public APawn
 {
 	GENERATED_BODY()
 
@@ -78,13 +78,13 @@ private:
 
 	/** How quickly forward dash speed is */
 	UPROPERTY(Category = Plane, EditAnywhere)
-		float DashSpeed = 200;
+	float DashSpeed = 200;
 
 	/** How sensitive the comet moves sideways */
 	UPROPERTY(Category = Plane, EditAnywhere)
-		float PitchDashSpeed = 110;
+	float PitchDashSpeed = 110;
 	UPROPERTY(Category = Plane, EditAnywhere)
-		float YawDashSpeed = 110;
+	float YawDashSpeed = 110;
 
 	/** Current forward speed */
 	float CurrentForwardSpeed;
