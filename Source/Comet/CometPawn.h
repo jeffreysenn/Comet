@@ -108,9 +108,6 @@ private:
 	/*just to test some stuff*/
 	bool bIsDashing;
 
-	/* setting the dash time and editing in blueprint*/
-	UFUNCTION(BlueprintCallable)
-		bool getIsDash();
 
 public:
 	/** Returns PlaneMesh subobject **/
@@ -119,4 +116,8 @@ public:
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	/** Returns Camera subobject **/
 	FORCEINLINE class UCameraComponent* GetCamera() const { return Camera; }
+
+	/* setting the dash time and editing in blueprint*/
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetIsDash() const { return bIsDashing; }
 };
