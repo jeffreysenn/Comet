@@ -11,7 +11,6 @@
 #include "Engine/StaticMesh.h"
 #include "CometPlayerController.h"
 
-#include "DestructibleComponent.h"
 
 ACometPawn::ACometPawn()
 {
@@ -50,6 +49,7 @@ ACometPawn::ACometPawn()
 	MinSpeed = 500.f;
 	CurrentForwardSpeed = 500.f;
 	DashSpeed = 200.f;
+	DodgeSpeed = 500.f;
 	OriginalPitch = PitchSpeed;
 	OriginalYaw = YawSpeed;
 }
@@ -112,7 +112,7 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Thrust", this, &ACometPawn::ThrustInput);
 	PlayerInputComponent->BindAxis("MoveUp", this, &ACometPawn::MoveUpInput);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
-	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::MoveRightInput);
+	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::DodgeInput);
 	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
 
 }
@@ -186,4 +186,23 @@ void ACometPawn::DashInput(float Val)
 	float NewForwardSpeed = CurrentDashSpeed + (GetWorld()->GetDeltaSeconds() * CurrentDash);
 	// Clamp between MinSpeed and MaxSpeed
 	CurrentDashSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
+}
+
+void ACometPawn::DodgeInput(float Val)
+{
+	// Target yaw speed is based on input
+	float TargetYawSpeed = (Val * DodgeSpeed);
+
+	// Smoothly interpolate to target yaw speed
+	CurrentYawSpeed = FMath::FInterpTo(CurrentYawSpeed, TargetYawSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
+
+	// Is there any left/right input?
+	const bool bIsTurning = FMath::Abs(Val) > 0.2f;
+
+	// If turning, yaw value is used to influence roll
+	// If not turning, roll to reverse current roll value.
+	float TargetRollSpeed = bIsTurning ? (CurrentYawSpeed * 0.5f) : (GetActorRotation().Roll * -2.f);
+
+	// Smoothly interpolate roll speed
+	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
 }

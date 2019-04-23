@@ -52,6 +52,9 @@ protected:
 	/** Bound to the dash axis */
 	void DashInput(float Val);
 
+	/*Bound to the Dodge axis*/
+	void DodgeInput(float Val);
+
 private:
 
 	/** How quickly forward speed changes */
@@ -80,6 +83,10 @@ private:
 	UPROPERTY(Category = Plane, EditAnywhere)
 	float DashSpeed = 200;
 
+	/*How sharp the dodge speed is*/
+	UPROPERTY(Category = Plane, EditAnywhere)
+		float DodgeSpeed = 500;
+
 	/** How sensitive the comet moves sideways */
 	UPROPERTY(Category = Plane, EditAnywhere)
 	float PitchDashSpeed = 110;
@@ -100,6 +107,9 @@ private:
 
 	/*Current Dash Speed*/
 	float CurrentDashSpeed;
+
+	/*Current Dodge Speed*/
+	float CurrentDodgeSpeed;
 
 	/*Saving original yaw and pitch speeds for the dash input*/
 	float OriginalPitch;
