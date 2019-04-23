@@ -28,6 +28,14 @@ UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
 	return nullptr;
 }
 
+//void ACometCompanion::OrbitAroundActor(AActor* CentreActor, FVector Axis, float Radius, float AngleDeg)
+//{
+//	FVector Offset = FVector::RightVector.RotateAngleAxis(AngleDeg, Axis);
+//	FVector Target = CentreActor->GetActorLocation() + Offset * Radius;
+//	FVector Move = FMath::Lerp(GetActorLocation(), Target);
+//	SetActorLocation(CentreActor->GetActorLocation() + Offset*Radius);
+//}
+
 // Called every frame
 void ACometCompanion::Tick(float DeltaTime)
 {

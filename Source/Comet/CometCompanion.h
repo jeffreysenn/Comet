@@ -32,6 +32,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	class UMoodComponent* FindLiberatorMoodComp(AActor* Liberator);
 
+	//// Orbit actor around a orbit centre at axis and radius
+	//UFUNCTION(BlueprintCallable)
+	//void OrbitAroundActor(AActor* CentreActor, FVector Axis, float Radius, float AngleDeg);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
