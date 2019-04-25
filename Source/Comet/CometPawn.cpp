@@ -48,7 +48,6 @@ ACometPawn::ACometPawn()
 	MaxSpeed = 4000.f;
 	MinSpeed = 500.f;
 	CurrentForwardSpeed = 500.f;
-	DashSpeed = 200.f;
 	DodgeSpeed = 500.f;
 	OriginalPitch = PitchSpeed;
 	OriginalYaw = YawSpeed;
@@ -59,12 +58,11 @@ void ACometPawn::Tick(float DeltaSeconds)
 	// Call any parent class Tick implementation
 	Super::Tick(DeltaSeconds);
 
-	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f);
-	const FVector LocalDash = FVector(CurrentDashSpeed * DeltaSeconds, 0.f, 0.f);
+	const FVector DashMove = FVector(CurrentDashSpeed * DeltaSeconds, 0.f, 0.f);
+	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f) + DashMove;
 
 	// Move plan forwards (with sweep so we stop when we collide with things)
 	AddActorLocalOffset(LocalMove, true);
-	AddActorLocalOffset(LocalDash, true);
 
 	// Calculate change in rotation this frame
 	FRotator DeltaRotation(0,0,0);
@@ -92,16 +90,6 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 	}
 }
 
-
-void ACometPawn::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (Controller)
-	{
-		PlayerController = Cast<ACometPlayerController>(Controller);
-	}
-}
 
 void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -162,30 +150,101 @@ void ACometPawn::MoveRightInput(float Val)
 
 void ACometPawn::DashInput(float Val)
 {
-	// Is there any input?
 	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
-	float CurrentDash = 0;
-	
-	//if input was pressed
-	if (bHasInput) 
+	switch (MovementState)
 	{
-		bIsDashing = true;
-		CurrentDash = Val * DashSpeed;
-		YawSpeed = YawDashSpeed;
-		PitchSpeed = PitchDashSpeed;
-	}
-	else
-	{
-		CurrentDash = DashSpeed * 0.f;
-		YawSpeed = OriginalYaw;
-		PitchSpeed = OriginalPitch;
-		CurrentDashSpeed = FMath::Clamp(MinSpeed, MinSpeed, MaxSpeed);
-	}
+	// Is there any input?
+	case EMovementEnum::ME_Normal:
+		if (bHasInput)
+		{
+			MovementState = EMovementEnum::ME_Charging;
+		}
+		break;
+	case EMovementEnum::ME_Charging:
+		// If is charging
+		if (bHasInput)
+		{
+			// Call charge event
+			OnCharge();
 
-	// Calculate new speed
-	float NewForwardSpeed = CurrentDashSpeed + (GetWorld()->GetDeltaSeconds() * CurrentDash);
-	// Clamp between MinSpeed and MaxSpeed
-	CurrentDashSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
+			// Increase charge
+			float CurrentCharge = Val * DashChargeSpeed * GetWorld()->GetDeltaSeconds();
+			DashCharged = FMath::Min(MaxDashCharge, DashCharged + CurrentCharge);
+
+			// Slow down the movement
+			float NewForwardSpeed = CurrentForwardSpeed + DashChargingAcc * GetWorld()->GetDeltaSeconds();
+			CurrentForwardSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
+		}
+		else
+		{
+			MovementState = EMovementEnum::ME_Dashing;
+		}
+		break;
+	case EMovementEnum::ME_Dashing:
+		// Call event
+		OnDash();
+		if (DashCharged > 0)
+		{
+			float NewDashSpeed = CurrentDashSpeed + DashAcc * GetWorld()->GetDeltaSeconds();
+			CurrentDashSpeed = FMath::Clamp(NewDashSpeed, MinSpeed, MaxDashSpeed);
+			DashCharged -= GetWorld()->GetDeltaSeconds();
+		}
+		else
+		{
+			DashCharged = 0;
+			MovementState = EMovementEnum::ME_DeDashing;
+		}
+		break;
+	case EMovementEnum::ME_DeDashing:
+		OnDeDash();
+
+		float NewDashSpeed = CurrentDashSpeed + DeDashingAcc * GetWorld()->GetDeltaSeconds();
+		if (NewDashSpeed > 0)
+		{
+			CurrentDashSpeed = NewDashSpeed;
+		}
+		else
+		{
+			CurrentDashSpeed = 0;
+			MovementState = EMovementEnum::ME_Normal;
+		}
+
+		//if (CurrentDeDashingTime < DeDashingAcc)
+		//{
+		//	CurrentDashSpeed = FMath::Lerp(CurrentDashSpeed, 0.f, CurrentDeDashingTime / DeDashingAcc);
+		//	CurrentDeDashingTime += GetWorld()->GetDeltaSeconds();
+		//}
+		//else
+		//{
+		//	CurrentDeDashingTime = 0;
+		//	MovementState = EMovementEnum::ME_Normal;
+		//}
+
+		break;
+	}
+	
+
+
+	////if input was pressed
+	//if (bHasInput) 
+	//{
+	//	bIsDashing = true;
+	//	CurrentDash = Val * DashSpeed;
+	//	YawSpeed = YawDashSpeed;
+	//	PitchSpeed = PitchDashSpeed;
+	//}
+	//else
+	//{
+	//	CurrentDash = DashSpeed * 0.f;
+	//	YawSpeed = OriginalYaw;
+	//	PitchSpeed = OriginalPitch;
+	//	CurrentDashSpeed = FMath::Clamp(MinSpeed, MinSpeed, MaxSpeed);
+	//}
+
+	//// Calculate new speed
+	//float NewForwardSpeed = CurrentDashSpeed + (GetWorld()->GetDeltaSeconds() * CurrentDash);
+	//// Clamp between MinSpeed and MaxSpeed
+	//CurrentDashSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
 }
 
 void ACometPawn::DodgeInput(float Val)
