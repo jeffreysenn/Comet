@@ -146,6 +146,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool GetIsDash() const { return bIsDashing; }
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE EMovementEnum GetMovementState() const { return MovementState; }
+
+
 protected:
 
 	// Begin APawn overrides
