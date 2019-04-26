@@ -82,7 +82,7 @@ void ACometPawn::Tick(float DeltaSeconds)
 void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-	if (!(GetIsDash() || OtherComp->GetCollisionObjectType() == ECC_Destructible))
+	if (!(GetIsDash() && OtherComp->GetCollisionObjectType() == ECC_Destructible))
 	{
 		// Deflect along the surface when we collide.
 		FRotator CurrentRotation = GetActorRotation();
