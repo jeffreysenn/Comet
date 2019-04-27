@@ -12,6 +12,7 @@ void UBeatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Copy UPROPERTY Beats data to BeatsPtr
 	for (auto Beat : Beats)
 	{
 		FBeatStruct* BeatPtr = new FBeatStruct();
@@ -45,12 +46,14 @@ void UBeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		if (TimeSinceLastLoopFinished <= BeatsPtr[CurrentBeatIndex]->TimePoint && TimeSinceLastLoopFinished + DeltaTime > BeatsPtr[CurrentBeatIndex]->TimePoint)
 		{
-			if (Sound)
+			if (BeatsPtr[CurrentBeatIndex]->BeatSound)
 			{
+				SetSound(BeatsPtr[CurrentBeatIndex]->BeatSound);
 				Play();
 			}
 			CurrentBeatIndex = (CurrentBeatIndex + 1) % (Beats.Num());
 		}
+		// Reset beat matching status after each loop
 		if (TimeSinceLastLoopFinished >= LoopLength)
 		{
 			TimeSinceLastLoopFinished = 0;

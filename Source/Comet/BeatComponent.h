@@ -18,6 +18,9 @@ struct FBeatStruct
 	UPROPERTY(EditAnywhere)
 	float TimeWindowHalfLength = 0.2f;
 
+	UPROPERTY(EditAnywhere)
+	USoundBase* BeatSound;
+
 	UPROPERTY(VisibleAnywhere)
 	bool bBeatMatched = false;
 
