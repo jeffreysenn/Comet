@@ -25,9 +25,14 @@ void UBeatComponent::BeginPlay()
 
 void UBeatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Super::EndPlay(EndPlayReason);
+
 	for (auto* BeatPtr : BeatsPtr)
 	{
-		delete BeatPtr;
+		if (BeatPtr)
+		{
+			delete BeatPtr;
+		}
 	}
 }
 
@@ -45,8 +50,6 @@ void UBeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 				Play();
 			}
 			CurrentBeatIndex = (CurrentBeatIndex + 1) % (Beats.Num());
-			// UE_LOG(LogTemp, Warning, TEXT("TimeSinceLastLoopFinished: %f"), TimeSinceLastLoopFinished);
-
 		}
 		if (TimeSinceLastLoopFinished >= LoopLength)
 		{
@@ -67,8 +70,6 @@ void UBeatComponent::RequestMatchBeat()
 		{
 			BeatsPtr[CurrentBeatIndex]->bBeatMatched = true;
 		}
-
-		// UE_LOG(LogTemp, Warning, TEXT("beat %d is matched: %s "), CurrentBeatIndex, Beats[CurrentBeatIndex].bBeatMatched ? TEXT("True") : TEXT("False"));
 
 	}
 
