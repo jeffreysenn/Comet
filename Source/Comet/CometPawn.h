@@ -171,6 +171,9 @@ protected:
 	/*Bound to the Dodge axis*/
 	void DodgeInput(float Val);
 
+	/** Bound to the sync action */
+	void SyncBeat();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDash();
 

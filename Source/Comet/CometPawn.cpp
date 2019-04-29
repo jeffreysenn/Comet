@@ -10,6 +10,8 @@
 #include "Engine/World.h"
 #include "Engine/StaticMesh.h"
 #include "CometPlayerController.h"
+#include "CometCompanion.h"
+#include "BeatComponent.h"
 
 
 ACometPawn::ACometPawn()
@@ -102,6 +104,8 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
 	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::DodgeInput);
 	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
+
+	PlayerInputComponent->BindAction("Sync", IE_Pressed, this, &ACometPawn::SyncBeat);
 
 }
 
@@ -222,29 +226,6 @@ void ACometPawn::DashInput(float Val)
 
 		break;
 	}
-	
-
-
-	////if input was pressed
-	//if (bHasInput) 
-	//{
-	//	bIsDashing = true;
-	//	CurrentDash = Val * DashSpeed;
-	//	YawSpeed = YawDashSpeed;
-	//	PitchSpeed = PitchDashSpeed;
-	//}
-	//else
-	//{
-	//	CurrentDash = DashSpeed * 0.f;
-	//	YawSpeed = OriginalYaw;
-	//	PitchSpeed = OriginalPitch;
-	//	CurrentDashSpeed = FMath::Clamp(MinSpeed, MinSpeed, MaxSpeed);
-	//}
-
-	//// Calculate new speed
-	//float NewForwardSpeed = CurrentDashSpeed + (GetWorld()->GetDeltaSeconds() * CurrentDash);
-	//// Clamp between MinSpeed and MaxSpeed
-	//CurrentDashSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
 }
 
 void ACometPawn::DodgeInput(float Val)
@@ -264,4 +245,29 @@ void ACometPawn::DodgeInput(float Val)
 
 	// Smoothly interpolate roll speed
 	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
+}
+
+void ACometPawn::SyncBeat()
+{
+	TArray<AActor*> OutOverlappingActors;
+	GetOverlappingActors(OutOverlappingActors, ACometCompanion::StaticClass());
+	if (OutOverlappingActors.Num() == 0) { return; }
+	else
+	{
+		for (auto* OutOverlappingActor : OutOverlappingActors)
+		{
+			auto* Companion = Cast<ACometCompanion>(OutOverlappingActor);
+			if (Companion)
+			{
+				if (!Companion->bIsFree)
+				{
+					auto* BeatComponent = Companion->FindComponentByClass<UBeatComponent>();
+					if (BeatComponent)
+					{
+						BeatComponent->RequestMatchBeat();
+					}
+				}
+			}
+		}
+	}
 }
