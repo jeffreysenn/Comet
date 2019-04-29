@@ -2,6 +2,8 @@
 
 #include "BeatComponent.h"
 
+#include "Components/SphereComponent.h"
+
 UBeatComponent::UBeatComponent(const FObjectInitializer & ObjectInitializer)
 {
 	bAutoActivate = false;
@@ -87,6 +89,12 @@ void UBeatComponent::RequestMatchBeat()
 	if (bAllBeatsMatched)
 	{
 		OnAllBeatsMatched.Broadcast();
+		auto* SphereCollider = GetOwner()->FindComponentByClass<USphereComponent>();
+		if (SphereCollider)
+		{
+			SphereCollider->DestroyComponent();
+		}
+		DestroyComponent();
 	}
 }
 
