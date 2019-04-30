@@ -84,6 +84,7 @@ void UBeatComponent::RequestMatchBeat()
 		if (!BeatPtr -> bBeatMatched)
 		{
 			bAllBeatsMatched = false;
+			break;
 		}
 	}
 	if (bAllBeatsMatched)
