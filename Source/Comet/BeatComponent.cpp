@@ -48,12 +48,14 @@ void UBeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		if (TimeSinceLastLoopFinished <= BeatsPtr[CurrentBeatIndex]->TimePoint && TimeSinceLastLoopFinished + DeltaTime > BeatsPtr[CurrentBeatIndex]->TimePoint)
 		{
+			OnBeatPlayed.Broadcast();
+
 			if (BeatsPtr[CurrentBeatIndex]->BeatSound)
 			{
 				SetSound(BeatsPtr[CurrentBeatIndex]->BeatSound);
 				Play();
 			}
-			CurrentBeatIndex = (CurrentBeatIndex + 1) % (Beats.Num());
+			CurrentBeatIndex = (CurrentBeatIndex + 1) % (BeatsPtr.Num());
 		}
 		// Reset beat matching status after each loop
 		if (TimeSinceLastLoopFinished >= LoopLength)

@@ -48,6 +48,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FBeatDelegate OnAllBeatsMatched;
 
+	UPROPERTY(BlueprintAssignable)
+	FBeatDelegate OnBeatPlayed;
+
+
 protected:
 	/** The time points of the beat */
 	UPROPERTY(EditAnywhere, Category = Beat)
@@ -64,17 +68,19 @@ private:
 
 	int32 CurrentBeatIndex = 0;
 
+
+public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintCallable)
+	void RequestMatchBeat();
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void RequestMatchBeat();
 
 private:
 	void ResetBeatMatch();
