@@ -174,6 +174,9 @@ protected:
 	/** Bound to the sync action */
 	void SyncBeat();
 
+	/** Bound to restart action */
+	void ReloadLevel();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDash();
 

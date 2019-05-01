@@ -12,6 +12,7 @@
 #include "CometPlayerController.h"
 #include "CometCompanion.h"
 #include "BeatComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ACometPawn::ACometPawn()
@@ -106,6 +107,7 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
 
 	PlayerInputComponent->BindAction("Sync", IE_Pressed, this, &ACometPawn::SyncBeat);
+	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &ACometPawn::ReloadLevel);
 
 }
 
@@ -270,4 +272,9 @@ void ACometPawn::SyncBeat()
 			}
 		}
 	}
+}
+
+void ACometPawn::ReloadLevel()
+{
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
