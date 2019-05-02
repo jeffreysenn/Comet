@@ -13,13 +13,13 @@ struct FBeatStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	float TimePoint;
+	float TimePoint = 0;
 
 	UPROPERTY(EditAnywhere)
 	float TimeWindowHalfLength = 0.2f;
 
 	UPROPERTY(EditAnywhere)
-	USoundBase* BeatSound;
+	USoundBase* BeatSound = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 	bool bBeatMatched = false;
