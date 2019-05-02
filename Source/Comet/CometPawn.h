@@ -26,9 +26,13 @@ public:
 
 
 public:
+	/** Scene component, root */
+	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* RootCollider;
+
 	/** StaticMesh component that will be the visuals for our flying pawn */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* PlaneMesh;
+	class UStaticMeshComponent* CometMesh;
 
 	/** Spring arm that will offset the camera */
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -41,17 +45,17 @@ public:
 protected:
 
 	/** How quickly forward speed changes */
-	UPROPERTY(Category=Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float Acceleration = 800;
 
 	/** How quickly pawn can steer */
-	UPROPERTY(Category=Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float YawSpeed = 90;
 
-	UPROPERTY(Category=Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float PitchSpeed = 90;
 
-	UPROPERTY(Category = Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float MaxPitchAngle = 85;
 
 	/** Max forward speed */
@@ -82,16 +86,18 @@ protected:
 	float DeDashingAcc = -3000;
 
 	/*How sharp the dodge speed is*/
-	UPROPERTY(Category = Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float DodgeSpeed = 500;
 
 	/** How sensitive the comet moves sideways */
-	UPROPERTY(Category = Plane, EditAnywhere)
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float PitchDashSpeed = 110;
-	UPROPERTY(Category = Plane, EditAnywhere)
+
+	UPROPERTY(Category = Movement, EditAnywhere)
 	float YawDashSpeed = 110;
 
-
+	UPROPERTY(Category = CometMesh, EditAnywhere)
+	float RollMod = 0.0002f;
 
 private:
 	/** Current forward speed */
@@ -136,7 +142,7 @@ public:
 	// End AActor overrides
 
 	/** Returns PlaneMesh subobject **/
-	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const { return PlaneMesh; }
+	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const { return CometMesh; }
 	/** Returns SpringArm subobject **/
 	FORCEINLINE class USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	/** Returns Camera subobject **/
@@ -176,6 +182,8 @@ protected:
 
 	/** Bound to restart action */
 	void ReloadLevel();
+
+	void RollForward(USceneComponent* Comp, float RollAmount);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDash();

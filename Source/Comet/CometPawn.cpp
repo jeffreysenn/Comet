@@ -4,6 +4,7 @@
 
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -17,21 +18,17 @@
 
 ACometPawn::ACometPawn()
 {
-	// Structure to hold one-time initialization
-	struct FConstructorStatics
-	{
-		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> PlaneMesh;
-		FConstructorStatics()
-			: PlaneMesh(TEXT("/Game/Flying/Meshes/UFO.UFO"))
-		{
-		}
-	};
-	static FConstructorStatics ConstructorStatics;
+	PrimaryActorTick.bCanEverTick = true;
+
+
+	RootCollider = CreateDefaultSubobject<USphereComponent>(TEXT("RootCollider0"));
+	RootCollider->InitSphereRadius(100.f);
+	RootCollider->SetNotifyRigidBodyCollision(true);
+	RootComponent = RootCollider;
 
 	// Create static mesh component
-	PlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlaneMesh0"));
-	PlaneMesh->SetStaticMesh(ConstructorStatics.PlaneMesh.Get());	// Set static mesh
-	RootComponent = PlaneMesh;
+	CometMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CometMesh0"));
+	CometMesh->SetupAttachment(RootComponent);
 
 	// Create a spring arm component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
@@ -46,12 +43,8 @@ ACometPawn::ACometPawn()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);	// Attach the camera
 	Camera->bUsePawnControlRotation = false; // Don't rotate camera with controller
 
+
 	// Set handling parameters
-	Acceleration = 500.f;
-	MaxSpeed = 4000.f;
-	MinSpeed = 500.f;
-	CurrentForwardSpeed = 500.f;
-	DodgeSpeed = 500.f;
 	OriginalPitch = PitchSpeed;
 	OriginalYaw = YawSpeed;
 }
@@ -64,7 +57,7 @@ void ACometPawn::Tick(float DeltaSeconds)
 	const FVector DashMove = FVector(CurrentDashSpeed * DeltaSeconds, 0.f, 0.f);
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f) + DashMove;
 
-	// Move plan forwards (with sweep so we stop when we collide with things)
+	// Move forwards (with sweep so we stop when we collide with things)
 	AddActorLocalOffset(LocalMove, true);
 
 	// Calculate change in rotation this frame
@@ -77,14 +70,21 @@ void ACometPawn::Tick(float DeltaSeconds)
 	{
 		DeltaRotation.Pitch = 0;
 	}
-	// Rotate plane
+	// Rotate root
 	AddActorLocalRotation(DeltaRotation);
+
+	// Roll the comet mesh
+	float CurrentSpeed = CurrentForwardSpeed + CurrentDashSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("CurrentSpeed: %f"), CurrentSpeed);
+	RollForward(CometMesh, CurrentSpeed * RollMod);
 
 }
 
 void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+
 	if (!(GetIsDash() && OtherComp->GetCollisionObjectType() == ECC_Destructible))
 	{
 		// Deflect along the surface when we collide.
@@ -110,6 +110,7 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &ACometPawn::ReloadLevel);
 
 }
+
 
 void ACometPawn::ThrustInput(float Val)
 {
@@ -215,17 +216,6 @@ void ACometPawn::DashInput(float Val)
 			MovementState = EMovementEnum::ME_Normal;
 		}
 
-		//if (CurrentDeDashingTime < DeDashingAcc)
-		//{
-		//	CurrentDashSpeed = FMath::Lerp(CurrentDashSpeed, 0.f, CurrentDeDashingTime / DeDashingAcc);
-		//	CurrentDeDashingTime += GetWorld()->GetDeltaSeconds();
-		//}
-		//else
-		//{
-		//	CurrentDeDashingTime = 0;
-		//	MovementState = EMovementEnum::ME_Normal;
-		//}
-
 		break;
 	}
 }
@@ -277,4 +267,11 @@ void ACometPawn::SyncBeat()
 void ACometPawn::ReloadLevel()
 {
 	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+}
+
+void ACometPawn::RollForward(USceneComponent* Comp, float RollAmount)
+{
+	if (!Comp) { return; }
+	FRotator DeltaRotation = FRotator(-1, 0, 0) * RollAmount;
+	Comp->AddLocalRotation(DeltaRotation);
 }
