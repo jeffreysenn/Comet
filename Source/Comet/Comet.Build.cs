@@ -9,7 +9,7 @@ public class Comet : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "RHI", "RenderCore", "ShaderCore", "ProceduralMeshComponent", "ApexDestruction" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "RHI", "RenderCore", "ProceduralMeshComponent", "ApexDestruction" });
         PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent" });
     }
 }
