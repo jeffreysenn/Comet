@@ -89,12 +89,12 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 	{
 		// Deflect along the surface when we collide.
 		FRotator CurrentRotation = GetActorRotation();
-		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.05f));
+		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.5f));
 
-		CurrentForwardSpeed = 0;
-		CurrentPitchSpeed = 0;
-		CurrentYawSpeed = 0;
-		CurrentRollSpeed = 0;
+		//CurrentForwardSpeed = 0;
+		//CurrentPitchSpeed = 0;
+		//CurrentYawSpeed = 0;
+		//CurrentRollSpeed = 0;
 	}
 }
 
