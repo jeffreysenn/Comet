@@ -75,7 +75,7 @@ void ACometPawn::Tick(float DeltaSeconds)
 
 	// Roll the comet mesh
 	float CurrentSpeed = CurrentForwardSpeed + CurrentDashSpeed;
-	UE_LOG(LogTemp, Warning, TEXT("CurrentSpeed: %f"), CurrentSpeed);
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentSpeed: %f"), CurrentSpeed);
 	RollForward(CometMesh, CurrentSpeed * RollMod);
 
 }
@@ -89,7 +89,12 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 	{
 		// Deflect along the surface when we collide.
 		FRotator CurrentRotation = GetActorRotation();
-		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.025f));
+		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.05f));
+
+		CurrentForwardSpeed = 0;
+		CurrentPitchSpeed = 0;
+		CurrentYawSpeed = 0;
+		CurrentRollSpeed = 0;
 	}
 }
 
@@ -105,6 +110,14 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
 	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::DodgeInput);
 	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
+
+
+	PlayerInputComponent->BindAxis("MoveUp_Stick", this, &ACometPawn::MoveUpInput_Stick);
+	PlayerInputComponent->BindAxis("MoveRight_Stick", this, &ACometPawn::MoveRightInput_Stick);
+
+	PlayerInputComponent->BindAxis("MoveUp_Gyro", this, &ACometPawn::MoveUpInput_Gyro);
+	PlayerInputComponent->BindAxis("MoveRight_Gyro", this, &ACometPawn::MoveRightInput_Gyro);
+
 
 	PlayerInputComponent->BindAction("Sync", IE_Pressed, this, &ACometPawn::SyncBeat);
 	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &ACometPawn::ReloadLevel);
@@ -153,6 +166,34 @@ void ACometPawn::MoveRightInput(float Val)
 
 	// Smoothly interpolate roll speed
 	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
+}
+
+void ACometPawn::MoveUpInput_Gyro(float Val)
+{
+	if(bUseMotionControl)
+	{
+		MoveUpInput(Val);
+	}
+}
+
+void ACometPawn::MoveRightInput_Gyro(float Val)
+{
+	if (bUseMotionControl) 
+	{
+		MoveRightInput(Val);
+	}
+}
+
+void ACometPawn::MoveUpInput_Stick(float Val)
+{
+	if (bUseMotionControl) { return; }
+	MoveUpInput(Val);
+}
+
+void ACometPawn::MoveRightInput_Stick(float Val)
+{
+	if (bUseMotionControl) { return; }
+	MoveRightInput_Stick(Val);
 }
 
 void ACometPawn::DashInput(float Val)

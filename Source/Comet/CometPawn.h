@@ -63,7 +63,7 @@ protected:
 	float MaxSpeed = 5000;
 
 	/** Min forward speed */
-	UPROPERTY(Category=Yaw, EditAnywhere)
+	UPROPERTY(Category = Yaw, EditAnywhere)
 	float MinSpeed = 50;
 
 	/** How quickly forward dash speed is */
@@ -98,6 +98,9 @@ protected:
 
 	UPROPERTY(Category = CometMesh, EditAnywhere)
 	float RollMod = 0.0002f;
+
+	UPROPERTY(Category = Input, EditAnywhere)
+	bool bUseMotionControl = true;
 
 private:
 	/** Current forward speed */
@@ -170,6 +173,16 @@ protected:
 
 	/** Bound to the horizontal axis */
 	void MoveRightInput(float Val);
+
+
+	void MoveUpInput_Gyro(float Val);
+
+	void MoveRightInput_Gyro(float Val);
+
+	void MoveUpInput_Stick(float Val);
+
+	void MoveRightInput_Stick(float Val);
+
 
 	/** Bound to the dash axis */
 	void DashInput(float Val);
