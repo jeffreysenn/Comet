@@ -42,6 +42,9 @@ public:
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
+	UPROPERTY(Category = Input, EditAnywhere)
+	bool bUseMotionControl = true;
+
 protected:
 
 	/** How quickly forward speed changes */
@@ -105,8 +108,7 @@ protected:
 	UPROPERTY(Category = CometMesh, EditAnywhere)
 	float RollMod = 0.0002f;
 
-	UPROPERTY(Category = Input, EditAnywhere)
-	bool bUseMotionControl = true;
+
 
 private:
 	/** Current forward speed */
