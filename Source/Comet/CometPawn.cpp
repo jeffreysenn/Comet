@@ -328,3 +328,8 @@ void ACometPawn::RollForward(USceneComponent* Comp, float RollAmount)
 	FRotator DeltaRotation = FRotator(-1, 0, 0) * RollAmount;
 	Comp->AddLocalRotation(DeltaRotation);
 }
+
+void ACometPawn::SetUseMotionControl(bool bInUse)
+{
+	bUseMotionControl = bInUse;
+}

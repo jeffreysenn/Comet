@@ -42,8 +42,7 @@ public:
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
-	UPROPERTY(Category = Input, EditAnywhere)
-	bool bUseMotionControl = true;
+
 
 protected:
 
@@ -108,7 +107,8 @@ protected:
 	UPROPERTY(Category = CometMesh, EditAnywhere)
 	float RollMod = 0.0002f;
 
-
+	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
+	bool bUseMotionControl = true;
 
 private:
 	/** Current forward speed */
@@ -166,6 +166,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE EMovementEnum GetMovementState() const { return MovementState; }
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetUseMotionControll() const {return bUseMotionControl;}
+
+	UFUNCTION(BlueprintCallable)
+	void SetUseMotionControl(bool bInUse);
 
 protected:
 
