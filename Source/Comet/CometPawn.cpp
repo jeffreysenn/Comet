@@ -129,8 +129,20 @@ void ACometPawn::ThrustInput(float Val)
 {
 	// Is there any input?
 	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
-	// If input is not held down, reduce speed
-	float CurrentAcc = bHasInput ? (Val * Acceleration) : (-0.5f * Acceleration);
+	float CurrentAcc = NaturalAcceleration;
+
+	if (bHasInput)
+	{
+		if (Val > 0)
+		{
+			CurrentAcc = Val * Acceleration;
+		}
+		else
+		{
+			CurrentAcc = Val * BrakeAcceleration;
+		}
+	}
+
 	// Calculate new speed
 	float NewForwardSpeed = CurrentForwardSpeed + (GetWorld()->GetDeltaSeconds() * CurrentAcc);
 	// Clamp between MinSpeed and MaxSpeed

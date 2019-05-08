@@ -48,6 +48,12 @@ protected:
 	UPROPERTY(Category = Movement, EditAnywhere)
 	float Acceleration = 800;
 
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float NaturalAcceleration = -800;
+
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float BrakeAcceleration = 2000;
+
 	/** How quickly pawn can steer */
 	UPROPERTY(Category = Movement, EditAnywhere)
 	float YawSpeed = 90;
