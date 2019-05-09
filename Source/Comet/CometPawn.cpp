@@ -205,7 +205,7 @@ void ACometPawn::MoveUpInput_Stick(float Val)
 void ACometPawn::MoveRightInput_Stick(float Val)
 {
 	if (bUseMotionControl) { return; }
-	MoveRightInput_Stick(Val);
+	MoveRightInput(Val);
 }
 
 void ACometPawn::DashInput(float Val)
