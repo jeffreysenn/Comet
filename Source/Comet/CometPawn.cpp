@@ -17,6 +17,7 @@
 #include "Components/AudioComponent.h"
 #include "NiagaraComponent.h"
 #include "CometCompanion.h"
+#include "SunCompanion.h"
 
 
 ACometPawn::ACometPawn()
@@ -36,10 +37,6 @@ ACometPawn::ACometPawn()
 	// Create a spring arm component
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
 	SpringArm->SetupAttachment(RootComponent);	// Attach SpringArm to RootComponent
-	SpringArm->TargetArmLength = 160.0f; // The camera follows at this distance behind the character	
-	SpringArm->SocketOffset = FVector(0.f,0.f,60.f);
-	SpringArm->bEnableCameraLag = false;	// Do not allow camera to lag
-	SpringArm->CameraLagSpeed = 15.f;
 
 	// Create camera component 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera0"));
@@ -92,17 +89,26 @@ void ACometPawn::Tick(float DeltaSeconds)
 	// Update particle system user variables
 	if (BeatNiagara != NULL)
 	{
+		// Set Niagara spawning rotation quat
 		FQuat MeshRoationQuat = CometMesh->GetComponentRotation().Quaternion();
 		FQuat LocalMeshRotationQuat = BeatNiagara->GetComponentTransform().InverseTransformRotation(MeshRoationQuat);
 		BeatNiagara->SetNiagaraVariableQuat("User.SpawningQuat", LocalMeshRotationQuat);
-		BeatNiagara->SetNiagaraVariableVec2("User.SpriteSize", ParticleSpriteSize);
+
+		//Set Niagara sprite size
+		FVector2D FinalSpriteSize = ParticleSpriteSize * GetActorScale().X;
+		BeatNiagara->SetNiagaraVariableVec2("User.SpriteSize", FinalSpriteSize);
 
 		if (ClosestCompanion != NULL)
 		{
+			BeatNiagara->SetNiagaraVariableBool("User.bUseLineAttractionForce", true);
 			FVector ClosestCompanionRelativeLocation = BeatNiagara->GetComponentTransform().InverseTransformPosition(ClosestCompanion->GetActorLocation());
 			BeatNiagara->SetNiagaraVariableVec3("User.ClosestCompanionLocation", ClosestCompanionRelativeLocation);
 		}
-		//TODO: If ClosestCompanion == NULL, feed the sun relative location
+		// If ClosestCompanion == NULL, do not apply line force
+		else
+		{
+			BeatNiagara->SetNiagaraVariableBool("User.bUseLineAttractionForce", false);
+		}
 
 		BeatNiagara->SetNiagaraVariableBool("User.bShouldSpawn", bShouldSpawnBeatParticle);
 		if (bShouldSpawnBeatParticle)
@@ -344,6 +350,8 @@ void ACometPawn::SyncBeat()
 	{
 		ClosestCompanion = FindClosestCompanion();
 
+		// UE_LOG(LogTemp, Warning, TEXT("ClosestCompanion: %s"), ClosestCompanion != NULL ? *ClosestCompanion->GetName() : TEXT("Bullshit"));
+
 		bShouldSpawnBeatParticle = true;
 
 	}
@@ -371,7 +379,7 @@ void ACometPawn::SyncBeat()
 					auto* BeatComponent = Companion->FindComponentByClass<UBeatComponent>();
 					if (BeatComponent)
 					{
-						BeatComponent->RequestMatchBeat();
+						BeatComponent->RequestMatchBeat(this);
 					}
 				}
 			}
@@ -402,10 +410,18 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 		ACometCompanion* Companion = Cast<ACometCompanion>(Actor);
 		if (Companion)
 		{
+			// Ignore the already freed companions
 			if (Companion->bIsFree)
 			{
 				continue;
 			}
+			// If the MyClosestCompanion is not set, set it to the sun
+			else if (MyClosestCompanion == nullptr && Companion->IsA(ASunCompanion::StaticClass()))
+			{
+				MyClosestCompanion = Companion;
+				continue;
+			}
+
 			else
 			{
 				float Dist = FVector::Dist(GetActorLocation(), Companion->GetActorLocation());
@@ -416,7 +432,17 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 				}
 			}
 		}
+
 	}
+
+	// TODO: properly activate the sun beat
+	// if only the sun is left, activate the sun beat
+	if (MyClosestCompanion != NULL && MyClosestCompanion->IsA(ASunCompanion::StaticClass()))
+	{
+		ASunCompanion* SunCompanion = Cast<ASunCompanion>(MyClosestCompanion);
+		SunCompanion->SetBeatAndParticleActive(true);
+	}
+
 	return MyClosestCompanion;
 }
 

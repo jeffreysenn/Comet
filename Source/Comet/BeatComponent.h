@@ -68,12 +68,16 @@ private:
 
 	int32 CurrentBeatIndex = 0;
 
+	UPROPERTY()
+	class ACometPawn* RequestedPawn = nullptr;
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void RequestMatchBeat();
+	void RequestMatchBeat(class ACometPawn* Requester);
+
+	FORCEINLINE class ACometPawn* GetRequestedPawn() const { return RequestedPawn; }
 
 protected:
 	virtual void BeginPlay() override;

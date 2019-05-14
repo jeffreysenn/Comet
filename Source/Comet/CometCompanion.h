@@ -23,10 +23,25 @@ public:
 	UPROPERTY(Category = Collider, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* BrakeShpere;
 
+	UPROPERTY(Category = Collider, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* SyncSphere;
+
+	UPROPERTY(Category = Beat, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UNiagaraComponent* BeatNiagara;
+
+	UPROPERTY(Category = Beat, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UBeatComponent* BeatComponent;
+
 	bool bIsFree = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EMoodEnum MoodType;
+
+protected:
+	bool bShouldSpawnBeatParticle = false;
+
+	UPROPERTY(Category = Particle, EditAnywhere)
+	FVector2D ParticleSpriteSize = FVector2D(8.f, 10.f);
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,6 +55,12 @@ protected:
 
 	UFUNCTION()
 	void OnBrakeSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void RespondToBeatPlayed();
+
+	UFUNCTION()
+	void RespondToAllBeatsMatched();
 
 	//// Orbit actor around a orbit centre at axis and radius
 	//UFUNCTION(BlueprintCallable)

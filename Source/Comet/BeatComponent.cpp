@@ -3,6 +3,7 @@
 #include "BeatComponent.h"
 
 #include "Components/SphereComponent.h"
+#include "CometPawn.h"
 
 UBeatComponent::UBeatComponent(const FObjectInitializer & ObjectInitializer)
 {
@@ -68,8 +69,10 @@ void UBeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	TimeSinceLastLoopFinished += DeltaTime;
 }
 
-void UBeatComponent::RequestMatchBeat()
+void UBeatComponent::RequestMatchBeat(ACometPawn* Requester)
 {
+	RequestedPawn = Requester;
+
 	if (BeatsPtr.IsValidIndex(CurrentBeatIndex))
 	{
 		if (TimeSinceLastLoopFinished >= BeatsPtr[CurrentBeatIndex]->TimePoint - BeatsPtr[CurrentBeatIndex]->TimeWindowHalfLength
