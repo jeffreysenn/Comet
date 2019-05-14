@@ -14,6 +14,9 @@
 #include "CometCompanion.h"
 #include "BeatComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
+#include "NiagaraComponent.h"
+#include "CometCompanion.h"
 
 
 ACometPawn::ACometPawn()
@@ -42,6 +45,13 @@ ACometPawn::ACometPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera0"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);	// Attach the camera
 	Camera->bUsePawnControlRotation = false; // Don't rotate camera with controller
+
+
+	BeatNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BeatNiagara0"));
+	BeatNiagara->SetupAttachment(RootComponent);
+
+	BeatAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("BeatAudio0"));
+	BeatAudio->SetupAttachment(RootComponent);
 
 
 	// Set handling parameters
@@ -73,10 +83,34 @@ void ACometPawn::Tick(float DeltaSeconds)
 	// Rotate root
 	AddActorLocalRotation(DeltaRotation);
 
+
 	// Roll the comet mesh
 	float CurrentSpeed = CurrentForwardSpeed + CurrentDashSpeed;
 	// UE_LOG(LogTemp, Warning, TEXT("CurrentSpeed: %f"), CurrentSpeed);
 	RollForward(CometMesh, CurrentSpeed * RollMod);
+
+	// Update particle system user variables
+	if (BeatNiagara != NULL)
+	{
+		FQuat MeshRoationQuat = CometMesh->GetComponentRotation().Quaternion();
+		FQuat LocalMeshRotationQuat = BeatNiagara->GetComponentTransform().InverseTransformRotation(MeshRoationQuat);
+		BeatNiagara->SetNiagaraVariableQuat("User.SpawningQuat", LocalMeshRotationQuat);
+		BeatNiagara->SetNiagaraVariableVec2("User.SpriteSize", ParticleSpriteSize);
+
+		if (ClosestCompanion != NULL)
+		{
+			FVector ClosestCompanionRelativeLocation = BeatNiagara->GetComponentTransform().InverseTransformPosition(ClosestCompanion->GetActorLocation());
+			BeatNiagara->SetNiagaraVariableVec3("User.ClosestCompanionLocation", ClosestCompanionRelativeLocation);
+		}
+		//TODO: If ClosestCompanion == NULL, feed the sun relative location
+
+		BeatNiagara->SetNiagaraVariableBool("User.bShouldSpawn", bShouldSpawnBeatParticle);
+		if (bShouldSpawnBeatParticle)
+		{
+			bShouldSpawnBeatParticle = false;
+		}
+	}
+
 
 }
 
@@ -294,6 +328,22 @@ void ACometPawn::DodgeInput(float Val)
 
 void ACometPawn::SyncBeat()
 {
+	if (BeatNiagara != NULL)
+	{
+		ClosestCompanion = FindClosestCompanion();
+
+		bShouldSpawnBeatParticle = true;
+
+	}
+
+	if (BeatAudio != NULL)
+	{
+		if (BeatAudio->Sound)
+		{
+			BeatAudio->Play();
+		}
+	}
+
 	TArray<AActor*> OutOverlappingActors;
 	GetOverlappingActors(OutOverlappingActors, ACometCompanion::StaticClass());
 	if (OutOverlappingActors.Num() == 0) { return; }
@@ -327,6 +377,35 @@ void ACometPawn::RollForward(USceneComponent* Comp, float RollAmount)
 	if (!Comp) { return; }
 	FRotator DeltaRotation = FRotator(-1, 0, 0) * RollAmount;
 	Comp->AddLocalRotation(DeltaRotation);
+}
+
+ACometCompanion* ACometPawn::FindClosestCompanion()
+{
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACometCompanion::StaticClass(), OutActors);
+	float MinDist = TNumericLimits<float>::Max();
+	ACometCompanion* MyClosestCompanion = nullptr;
+	for (AActor* Actor : OutActors)
+	{
+		ACometCompanion* Companion = Cast<ACometCompanion>(Actor);
+		if (Companion)
+		{
+			if (Companion->bIsFree)
+			{
+				continue;
+			}
+			else
+			{
+				float Dist = FVector::Dist(GetActorLocation(), Companion->GetActorLocation());
+				if (Dist < MinDist)
+				{
+					MinDist = Dist;
+					MyClosestCompanion = Companion;
+				}
+			}
+		}
+	}
+	return MyClosestCompanion;
 }
 
 void ACometPawn::SetUseMotionControl(bool bInUse)

@@ -42,6 +42,11 @@ public:
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
+	UPROPERTY(Category = Particle, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UNiagaraComponent* BeatNiagara;
+
+	UPROPERTY(Category = Audio, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* BeatAudio;
 
 
 protected:
@@ -110,6 +115,10 @@ protected:
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
 	bool bUseMotionControl = true;
 
+	UPROPERTY(Category = Particle, EditAnywhere)
+	FVector2D ParticleSpriteSize = FVector2D(6.f, 8.f);
+
+
 private:
 	/** Current forward speed */
 	float CurrentForwardSpeed;
@@ -145,6 +154,10 @@ private:
 	EMovementEnum MovementState = EMovementEnum::ME_Normal;
 
 	float CurrentDeDashingTime = 0;
+
+	bool bShouldSpawnBeatParticle = false;
+
+	class ACometCompanion* ClosestCompanion = nullptr;
 
 public:
 	// Begin AActor overrides
@@ -219,6 +232,8 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCharge();
+
+	class ACometCompanion* FindClosestCompanion();
 
 };
 
