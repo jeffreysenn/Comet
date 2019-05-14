@@ -56,10 +56,13 @@ protected:
 	float Acceleration = 800;
 
 	UPROPERTY(Category = Movement, EditAnywhere)
-	float NaturalAcceleration = -800;
+	float NaturalAcceleration = -1600;
 
 	UPROPERTY(Category = Movement, EditAnywhere)
-	float BrakeAcceleration = 2000;
+	float BrakeDeceleration = 3000;
+
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float BrakeSphereDeceleration = 10000;
 
 	/** How quickly pawn can steer */
 	UPROPERTY(Category = Movement, EditAnywhere)
@@ -157,7 +160,10 @@ private:
 
 	bool bShouldSpawnBeatParticle = false;
 
+	UPROPERTY()
 	class ACometCompanion* ClosestCompanion = nullptr;
+
+	bool bThrustEnabled = true;
 
 public:
 	// Begin AActor overrides
@@ -184,6 +190,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetUseMotionControl(bool bInUse);
+
+	UFUNCTION(BlueprintCallable)
+	void SetThrustEnabled(bool bInEnabled);
 
 protected:
 

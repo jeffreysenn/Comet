@@ -161,19 +161,31 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 
 void ACometPawn::ThrustInput(float Val)
 {
+	float CurrentAcc = NaturalAcceleration;
 	// Is there any input?
 	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
-	float CurrentAcc = NaturalAcceleration;
 
-	if (bHasInput)
+	// Decelerate if thrust disabled 
+	if (!bThrustEnabled)
 	{
-		if (Val > 0)
+		CurrentAcc = -BrakeSphereDeceleration;
+		if (!bHasInput)
 		{
-			CurrentAcc = Val * Acceleration;
+			SetThrustEnabled(true);
 		}
-		else
+	}
+	else
+	{
+		if (bHasInput)
 		{
-			CurrentAcc = Val * BrakeAcceleration;
+			if (Val > 0)
+			{
+				CurrentAcc = Val * Acceleration;
+			}
+			else
+			{
+				CurrentAcc = Val * BrakeDeceleration;
+			}
 		}
 	}
 
@@ -411,4 +423,12 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 void ACometPawn::SetUseMotionControl(bool bInUse)
 {
 	bUseMotionControl = bInUse;
+}
+
+void ACometPawn::SetThrustEnabled(bool bInEnabled)
+{
+	if (bInEnabled != bThrustEnabled)
+	{
+		bThrustEnabled = bInEnabled;
+	}
 }

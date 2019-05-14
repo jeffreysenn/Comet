@@ -3,6 +3,9 @@
 #include "CometCompanion.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
+#include "CometPawn.h"
 
 // Sets default values
 ACometCompanion::ACometCompanion()
@@ -10,12 +13,28 @@ ACometCompanion::ACometCompanion()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CompanionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CompanionMesh0"));
+	RootComponent = CompanionMesh;
+
+	BrakeShpere = CreateDefaultSubobject<USphereComponent>(TEXT("BrakeShpere0"));
+	BrakeShpere->SetupAttachment(RootComponent);
+	BrakeShpere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	BrakeShpere->SetSphereRadius(2000.f);
 }
 
 // Called when the game starts or when spawned
 void ACometCompanion::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BrakeShpere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnBrakeSphereOverlapBegin);
+}
+
+// Called every frame
+void ACometCompanion::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
 }
 
 UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
@@ -28,12 +47,20 @@ UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
 	return nullptr;
 }
 
-// Called every frame
-void ACometCompanion::Tick(float DeltaTime)
+void ACometCompanion::OnBrakeSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::Tick(DeltaTime);
+	if (OtherActor != NULL)
+	{
 
+		ACometPawn* CometPawn = Cast<ACometPawn>(OtherActor);
+		if (CometPawn != NULL)
+		{
+			CometPawn->SetThrustEnabled(false);
+
+		}
+	}
 }
+
 
 void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 {
