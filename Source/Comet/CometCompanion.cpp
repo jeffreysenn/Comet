@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "CometPawn.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACometCompanion::ACometCompanion()
@@ -19,7 +20,7 @@ ACometCompanion::ACometCompanion()
 	BrakeShpere = CreateDefaultSubobject<USphereComponent>(TEXT("BrakeShpere0"));
 	BrakeShpere->SetupAttachment(RootComponent);
 	BrakeShpere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-	BrakeShpere->SetSphereRadius(2000.f);
+	BrakeShpere->SetSphereRadius(3000.f);
 }
 
 // Called when the game starts or when spawned
@@ -56,7 +57,8 @@ void ACometCompanion::OnBrakeSphereOverlapBegin(UPrimitiveComponent* OverlappedC
 		if (CometPawn != NULL)
 		{
 			CometPawn->SetThrustEnabled(false);
-
+			FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(CometPawn->GetActorLocation(), GetActorLocation());
+			CometPawn->SetActorRotation(PlayerRot);
 		}
 	}
 }
