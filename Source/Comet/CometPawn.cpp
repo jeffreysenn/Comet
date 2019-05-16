@@ -61,6 +61,8 @@ void ACometPawn::Tick(float DeltaSeconds)
 	// Call any parent class Tick implementation
 	Super::Tick(DeltaSeconds);
 
+	DashInput();
+
 	const FVector DashMove = FVector(CurrentDashSpeed * DeltaSeconds, 0.f, 0.f);
 	const FVector LocalMove = FVector(CurrentForwardSpeed * DeltaSeconds, 0.f, 0.f) + DashMove;
 
@@ -117,7 +119,7 @@ void ACometPawn::Tick(float DeltaSeconds)
 		}
 	}
 
-
+	
 }
 
 void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
@@ -149,7 +151,7 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveUp", this, &ACometPawn::MoveUpInput);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
 	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::DodgeInput);
-	PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
+	//PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
 
 
 	PlayerInputComponent->BindAxis("MoveUp_Stick", this, &ACometPawn::MoveUpInput_Stick);
@@ -260,41 +262,25 @@ void ACometPawn::MoveRightInput_Stick(float Val)
 	MoveRightInput(Val);
 }
 
-void ACometPawn::DashInput(float Val)
+void ACometPawn::DashInput()
 {
-	bool bHasInput = !FMath::IsNearlyEqual(Val, 0.f);
 	switch (MovementState)
 	{
 	// Is there any input?
 	case EMovementEnum::ME_Normal:
-		if (bHasInput)
+		if (bHasActivatedDash)
 		{
-			MovementState = EMovementEnum::ME_Charging;
-		}
-		break;
-	case EMovementEnum::ME_Charging:
-		// If is charging
-		if (bHasInput)
-		{
-			// Call charge event
-			OnCharge();
-
 			// Increase charge
-			float CurrentCharge = Val * DashChargeSpeed * GetWorld()->GetDeltaSeconds();
-			DashCharged = FMath::Min(MaxDashCharge, DashCharged + CurrentCharge);
-
-			// Slow down the movement
-			float NewForwardSpeed = CurrentForwardSpeed + DashChargingAcc * GetWorld()->GetDeltaSeconds();
-			CurrentForwardSpeed = FMath::Clamp(NewForwardSpeed, MinSpeed, MaxSpeed);
-		}
-		else
-		{
+			DashCharged = FMath::Min(MaxDashCharge, DashCharged + DustCharge);
 			MovementState = EMovementEnum::ME_Dashing;
 		}
 		break;
 	case EMovementEnum::ME_Dashing:
+	{
 		// Call event
 		OnDash();
+		
+
 		if (DashCharged > 0)
 		{
 			float NewDashSpeed = CurrentDashSpeed + DashAcc * GetWorld()->GetDeltaSeconds();
@@ -304,10 +290,15 @@ void ACometPawn::DashInput(float Val)
 		else
 		{
 			DashCharged = 0;
+			DustCharge = 0;
 			MovementState = EMovementEnum::ME_DeDashing;
 		}
 		break;
+
+	}
+
 	case EMovementEnum::ME_DeDashing:
+	{
 		OnDeDash();
 
 		float NewDashSpeed = CurrentDashSpeed + DeDashingAcc * GetWorld()->GetDeltaSeconds();
@@ -319,10 +310,15 @@ void ACometPawn::DashInput(float Val)
 		{
 			CurrentDashSpeed = 0;
 			MovementState = EMovementEnum::ME_Normal;
+			bHasActivatedDash = !FMath::IsNearlyEqual(DustCharge, 0.f);
 		}
 
 		break;
 	}
+	default:
+		break;
+	}
+
 }
 
 void ACometPawn::DodgeInput(float Val)
@@ -449,6 +445,19 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 void ACometPawn::SetUseMotionControl(bool bInUse)
 {
 	bUseMotionControl = bInUse;
+}
+
+void ACometPawn::SetHasActivatedDash(bool bHasUsed)
+{
+	bHasActivatedDash = bHasUsed;
+}
+
+void ACometPawn::SetDustCharge(float Val)
+{
+	if (DustCharge <= MaxDustCharge) 
+	{
+		DustCharge += Val;
+	}
 }
 
 void ACometPawn::SetThrustEnabled(bool bInEnabled)

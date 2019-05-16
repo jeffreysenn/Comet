@@ -115,12 +115,14 @@ protected:
 	UPROPERTY(Category = CometMesh, EditAnywhere)
 	float RollMod = 0.0002f;
 
+	UPROPERTY(Category = Input, EditAnywhere)
+		float MaxDustCharge = 0;
+
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
 	bool bUseMotionControl = true;
 
 	UPROPERTY(Category = Particle, EditAnywhere)
 	FVector2D ParticleSpriteSize = FVector2D(6.f, 8.f);
-
 
 private:
 	/** Current forward speed */
@@ -147,6 +149,12 @@ private:
 
 	/*just to test some stuff*/
 	bool bIsDashing;
+
+	/*activated dashing on collecting*/
+	bool bHasActivatedDash = false;
+
+	/*Current dust charge*/
+	float DustCharge = 0;
 
 	/** Dash Charged Amount */
 	UPROPERTY(VisibleAnywhere)
@@ -188,8 +196,20 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool GetUseMotionControll() const {return bUseMotionControl;}
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE float GetDustCharge() const { return DustCharge; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool GetHasActivatedDash() const { return bHasActivatedDash; }
+
 	UFUNCTION(BlueprintCallable)
 	void SetUseMotionControl(bool bInUse);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHasActivatedDash(bool bHasUsed);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDustCharge(float Val);
 
 	UFUNCTION(BlueprintCallable)
 	void SetThrustEnabled(bool bInEnabled);
@@ -219,8 +239,8 @@ protected:
 	void MoveRightInput_Stick(float Val);
 
 
-	/** Bound to the dash axis */
-	void DashInput(float Val);
+	/** Bound to the Dust collection */
+	void DashInput();
 
 	/*Bound to the Dodge axis*/
 	void DodgeInput(float Val);
