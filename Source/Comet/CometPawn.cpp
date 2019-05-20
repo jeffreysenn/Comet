@@ -361,24 +361,28 @@ void ACometPawn::SyncBeat()
 	}
 
 	TArray<AActor*> OutOverlappingActors;
-	GetOverlappingActors(OutOverlappingActors, ACometCompanion::StaticClass());
+	GetOverlappingActors(OutOverlappingActors, AActor::StaticClass());
 	if (OutOverlappingActors.Num() == 0) { return; }
 	else
 	{
 		for (auto* OutOverlappingActor : OutOverlappingActors)
 		{
-			auto* Companion = Cast<ACometCompanion>(OutOverlappingActor);
-			if (Companion)
+			//auto* Companion = Cast<ACometCompanion>(OutOverlappingActor);
+			//if (Companion)
+			//{
+				//if (!Companion->bIsFree)
+				//{
+			if (OutOverlappingActor) 
 			{
-				if (!Companion->bIsFree)
-				{
-					auto* BeatComponent = Companion->FindComponentByClass<UBeatComponent>();
+					auto* BeatComponent = OutOverlappingActor->FindComponentByClass<UBeatComponent>();
 					if (BeatComponent)
 					{
 						BeatComponent->RequestMatchBeat(this);
 					}
-				}
+
 			}
+				//}
+			//}
 		}
 	}
 }
