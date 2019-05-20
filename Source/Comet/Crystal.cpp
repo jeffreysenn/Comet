@@ -5,36 +5,43 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/MaterialBillboardComponent.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 ACrystal::ACrystal()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CrystalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CrystalMesh0"));
 	RootComponent = CrystalMesh;
+	CrystalMesh->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	CrystalMesh->SetMobility(EComponentMobility::Static);
 
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere0"));
 	AttractionSphere->SetupAttachment(RootComponent);
+	AttractionSphere->InitSphereRadius(1300.f);
 	AttractionSphere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &ACrystal::OnAttractionSphereOverlapBegin);
+	AttractionSphere->SetMobility(EComponentMobility::Static);
 
-	TrailParticle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailParticle0"));
-	TrailParticle->SetupAttachment(RootComponent);
+	GlowBillboard = CreateDefaultSubobject<UMaterialBillboardComponent>(TEXT("GlowBillboard0"));
+	GlowBillboard->SetupAttachment(RootComponent);
+
 }
 
-// Called when the game starts or when spawned
-void ACrystal::BeginPlay()
+
+
+void ACrystal::OnAttractionSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::BeginPlay();
-	
+	SetActorEnableCollision(false);
+	CrystalMesh->SetVisibility(false);
+
+	Obtainer = OtherActor;
+
+	ShinePlease();
+
+
 }
-
-// Called every frame
-void ACrystal::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
