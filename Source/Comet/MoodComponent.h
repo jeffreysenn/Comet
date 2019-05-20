@@ -10,6 +10,7 @@
 UENUM(BlueprintType)
 enum class EMoodEnum : uint8
 {
+	ME_DefaultType,
 	ME_Type0, 
 	ME_Type1,
 	ME_Type2,
@@ -31,14 +32,8 @@ public:
 
 protected:
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	UFUNCTION(BlueprintPure)
 	bool HasMoodType(EMoodEnum MoodType) const;
 

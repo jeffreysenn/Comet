@@ -87,16 +87,10 @@ protected:
 	float MaxDashSpeed = 20000;
 
 	UPROPERTY(Category = Dash, EditAnywhere)
-	float DashAcc = 8000;
+	float DashAcc = 100000;
 
 	UPROPERTY(Category = Dash, EditAnywhere)
-	float DashChargeSpeed = .5f;
-
-	UPROPERTY(Category = Dash, EditAnywhere)
-	float MaxDashCharge = 3;
-
-	UPROPERTY(Category = Dash, EditAnywhere)
-	float DashChargingAcc = -5000;
+	float MaxDashCharge = 2;
 
 	UPROPERTY(Category = Dash, EditAnywhere)
 	float DeDashingAcc = -3000;
@@ -114,9 +108,6 @@ protected:
 
 	UPROPERTY(Category = CometMesh, EditAnywhere)
 	float RollMod = 0.0002f;
-
-	UPROPERTY(Category = Input, EditAnywhere)
-		float MaxDustCharge = 0;
 
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
 	bool bUseMotionControl = true;
@@ -147,15 +138,6 @@ private:
 	float OriginalPitch;
 	float OriginalYaw;
 
-	/*just to test some stuff*/
-	bool bIsDashing;
-
-	/*activated dashing on collecting*/
-	bool bHasActivatedDash = false;
-
-	/*Current dust charge*/
-	float DustCharge = 0;
-
 	/** Dash Charged Amount */
 	UPROPERTY(VisibleAnywhere)
 	float DashCharged = 0;
@@ -179,6 +161,9 @@ public:
 	virtual void NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 	// End AActor overrides
 
+	UFUNCTION(BlueprintCallable)
+	void RequestDash(float DeltaCharge);
+
 	/** Returns PlaneMesh subobject **/
 	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const { return CometMesh; }
 	/** Returns SpringArm subobject **/
@@ -186,9 +171,6 @@ public:
 	/** Returns Camera subobject **/
 	FORCEINLINE class UCameraComponent* GetCamera() const { return Camera; }
 
-	/* setting the dash time and editing in blueprint*/
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool GetIsDash() const { return bIsDashing; }
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE EMovementEnum GetMovementState() const { return MovementState; }
@@ -196,20 +178,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool GetUseMotionControll() const {return bUseMotionControl;}
 
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE float GetDustCharge() const { return DustCharge; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool GetHasActivatedDash() const { return bHasActivatedDash; }
-
 	UFUNCTION(BlueprintCallable)
 	void SetUseMotionControl(bool bInUse);
-
-	UFUNCTION(BlueprintCallable)
-	void SetHasActivatedDash(bool bHasUsed);
-
-	UFUNCTION(BlueprintCallable)
-	void SetDustCharge(float Val);
 
 	UFUNCTION(BlueprintCallable)
 	void SetThrustEnabled(bool bInEnabled);
@@ -258,9 +228,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeDash();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnCharge();
 
 	class ACometCompanion* FindClosestCompanion();
 

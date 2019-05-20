@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MoodComponent.h"
+
 #include "Crystal.generated.h"
 
 UCLASS()
@@ -26,10 +28,24 @@ public:
 	class UMaterialBillboardComponent* GlowBillboard;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 TArray<class UStaticMesh*> MeshArr;
+
 	UPROPERTY(BlueprintReadOnly)
 	class AActor* Obtainer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMoodEnum MoodType = EMoodEnum::ME_DefaultType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Mass = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DashCharge = 0.1f;
+
 protected:
+	void BeginPlay() override;
+
 	UFUNCTION()
 	void OnAttractionSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

@@ -126,18 +126,14 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-
-	if (!(GetIsDash() && OtherComp->GetCollisionObjectType() == ECC_Destructible))
-	{
 		// Deflect along the surface when we collide.
 		FRotator CurrentRotation = GetActorRotation();
 		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.5f));
+}
 
-		//CurrentForwardSpeed = 0;
-		//CurrentPitchSpeed = 0;
-		//CurrentYawSpeed = 0;
-		//CurrentRollSpeed = 0;
-	}
+void ACometPawn::RequestDash(float DeltaCharge)
+{
+	DashCharged = FMath::Min(MaxDashCharge, DashCharged + DeltaCharge);
 }
 
 
@@ -268,18 +264,15 @@ void ACometPawn::DashInput()
 	{
 	// Is there any input?
 	case EMovementEnum::ME_Normal:
-		if (bHasActivatedDash)
+		if (DashCharged > 0)
 		{
-			// Increase charge
-			DashCharged = FMath::Min(MaxDashCharge, DashCharged + DustCharge);
+			// Call event
+			OnDash();
 			MovementState = EMovementEnum::ME_Dashing;
 		}
 		break;
 	case EMovementEnum::ME_Dashing:
 	{
-		// Call event
-		OnDash();
-		
 
 		if (DashCharged > 0)
 		{
@@ -290,7 +283,6 @@ void ACometPawn::DashInput()
 		else
 		{
 			DashCharged = 0;
-			DustCharge = 0;
 			MovementState = EMovementEnum::ME_DeDashing;
 		}
 		break;
@@ -299,7 +291,11 @@ void ACometPawn::DashInput()
 
 	case EMovementEnum::ME_DeDashing:
 	{
-		OnDeDash();
+		if (DashCharged > 0)
+		{
+			MovementState = EMovementEnum::ME_Dashing;
+		}
+
 
 		float NewDashSpeed = CurrentDashSpeed + DeDashingAcc * GetWorld()->GetDeltaSeconds();
 		if (NewDashSpeed > 0)
@@ -309,8 +305,8 @@ void ACometPawn::DashInput()
 		else
 		{
 			CurrentDashSpeed = 0;
+			OnDeDash();
 			MovementState = EMovementEnum::ME_Normal;
-			bHasActivatedDash = !FMath::IsNearlyEqual(DustCharge, 0.f);
 		}
 
 		break;
@@ -449,19 +445,6 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 void ACometPawn::SetUseMotionControl(bool bInUse)
 {
 	bUseMotionControl = bInUse;
-}
-
-void ACometPawn::SetHasActivatedDash(bool bHasUsed)
-{
-	bHasActivatedDash = bHasUsed;
-}
-
-void ACometPawn::SetDustCharge(float Val)
-{
-	if (DustCharge <= MaxDustCharge) 
-	{
-		DustCharge += Val;
-	}
 }
 
 void ACometPawn::SetThrustEnabled(bool bInEnabled)
