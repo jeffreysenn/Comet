@@ -18,6 +18,7 @@
 #include "NiagaraComponent.h"
 #include "CometCompanion.h"
 #include "SunCompanion.h"
+#include "MassComponent.h"
 
 
 ACometPawn::ACometPawn()
@@ -50,6 +51,8 @@ ACometPawn::ACometPawn()
 	BeatAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("BeatAudio0"));
 	BeatAudio->SetupAttachment(RootComponent);
 
+	MassComp = CreateDefaultSubobject<UMassComponent>(TEXT("MassComp0"));
+	MassComp->OnMassChanged.AddDynamic(this, &ACometPawn::CheckChangeMesh);
 
 	// Set handling parameters
 	OriginalPitch = PitchSpeed;
@@ -136,6 +139,14 @@ void ACometPawn::RequestDash(float DeltaCharge)
 	DashCharged = FMath::Min(MaxDashCharge, DashCharged + DeltaCharge);
 }
 
+
+void ACometPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentMeshIndex = 0;
+	ChangeMesh(CurrentMeshIndex);
+}
 
 void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -441,6 +452,26 @@ ACometCompanion* ACometPawn::FindClosestCompanion()
 
 	return MyClosestCompanion;
 }
+
+void ACometPawn::CheckChangeMesh(float Mass)
+{
+	int32 NextIndex = CurrentMeshIndex + 1;
+	if (MassMeshArr.IsValidIndex(NextIndex) && Mass > MassMeshArr[NextIndex].ThresholdMass)
+	{
+		ChangeMeshPlease(NextIndex);
+		CurrentMeshIndex = NextIndex;
+	}
+
+}
+
+void ACometPawn::ChangeMesh(int32 MeshIndex)
+{
+	if (MassMeshArr.IsValidIndex(MeshIndex) && MassMeshArr[MeshIndex].StaticMesh != NULL)
+	{
+		CometMesh->SetStaticMesh(MassMeshArr[MeshIndex].StaticMesh);
+	}
+}
+
 
 void ACometPawn::SetUseMotionControl(bool bInUse)
 {

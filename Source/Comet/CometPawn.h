@@ -14,6 +14,23 @@ enum class EMovementEnum : uint8
 	ME_DeDashing
 };
 
+USTRUCT(BlueprintType)
+struct FCometMassMeshStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ThresholdMass=0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* StaticMesh = NULL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AActor> ParticleActor = NULL;
+
+	FCometMassMeshStruct(){}
+};
+
 
 UCLASS(Config=Game)
 class COMET_API ACometPawn : public APawn
@@ -48,8 +65,13 @@ public:
 	UPROPERTY(Category = Audio, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAudioComponent* BeatAudio;
 
+	UPROPERTY(Category = Mass, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UMassComponent* MassComp;
+
 
 protected:
+	UPROPERTY(Category = Mesh, EditAnywhere, BlueprintReadWrite)
+	TArray<FCometMassMeshStruct> MassMeshArr;
 
 	/** How quickly forward speed changes */
 	UPROPERTY(Category = Movement, EditAnywhere)
@@ -116,6 +138,8 @@ protected:
 	FVector2D ParticleSpriteSize = FVector2D(6.f, 8.f);
 
 private:
+	int32 CurrentMeshIndex = 0;
+
 	/** Current forward speed */
 	float CurrentForwardSpeed;
 
@@ -155,6 +179,7 @@ private:
 
 	bool bThrustEnabled = true;
 
+
 public:
 	// Begin AActor overrides
 	virtual void Tick(float DeltaSeconds) override;
@@ -187,6 +212,7 @@ public:
 protected:
 
 	// Begin APawn overrides
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override; // Allows binding actions/axes to functions
 	// End APawn overrides
 
@@ -231,6 +257,14 @@ protected:
 
 	class ACometCompanion* FindClosestCompanion();
 
+	UFUNCTION()
+	void CheckChangeMesh(float Mass);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ChangeMeshPlease(int32 MeshIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeMesh(int32 MeshIndex);
 };
 
 

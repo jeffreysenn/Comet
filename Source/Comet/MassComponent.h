@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "MassComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMassCompSignature, float, Mass);
 
 UCLASS( ClassGroup=(Custom), Blueprintable, meta=(BlueprintSpawnableComponent) )
 class COMET_API UMassComponent : public UActorComponent
@@ -27,33 +28,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
 	float StartMass = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
-	float MassLostPerSecond = 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mass")
-	float DustSpawningMassLoss = 5;
+	UPROPERTY()
+	FMassCompSignature OnMassChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mass")
 	float CurrentMass = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mass")
-	float LastSpawnMass = 0;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	void GainMass(float DeltaMass);
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE float GetCurrentMass() const { return CurrentMass; }
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SpawnDust();
 		
 };
