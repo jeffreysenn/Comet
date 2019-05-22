@@ -25,14 +25,19 @@ ACometCompanion::ACometCompanion()
 	BrakeShpere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	BrakeShpere->SetSphereRadius(3000.f);
 
+
 	SyncSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SyncShpere0"));
 	SyncSphere->SetupAttachment(RootComponent);
 	SyncSphere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	SyncSphere->SetSphereRadius(15000.f);
 
+	CameraLockSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CameraLockSphere0"));
+	CameraLockSphere->SetupAttachment(RootComponent);
+	CameraLockSphere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	CameraLockSphere->SetSphereRadius(4000.f);
+
 	BeatComponent = CreateDefaultSubobject<UBeatComponent>(TEXT("BeatComp0"));
 	BeatComponent->SetupAttachment(RootComponent);
-
 
 	BeatNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BeatParticle0"));
 	BeatNiagara->SetupAttachment(RootComponent);
@@ -45,8 +50,12 @@ void ACometCompanion::BeginPlay()
 
 	BrakeShpere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnBrakeSphereOverlapBegin);
 
+	CameraLockSphere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnCameraLockSphereOverlapBegin);
+	CameraLockSphere->OnComponentEndOverlap.AddDynamic(this, &ACometCompanion::OnCameraLockSphereOverlapEnd);
+
 	BeatComponent->OnBeatPlayed.AddDynamic(this, &ACometCompanion::RespondToBeatPlayed);
 	BeatComponent->OnAllBeatsMatched.AddDynamic(this, &ACometCompanion::RespondToAllBeatsMatched);
+
 }
 
 // Called every frame
@@ -83,13 +92,35 @@ void ACometCompanion::OnBrakeSphereOverlapBegin(UPrimitiveComponent* OverlappedC
 {
 	if (OtherActor != NULL)
 	{
-
 		ACometPawn* CometPawn = Cast<ACometPawn>(OtherActor);
 		if (CometPawn != NULL)
 		{
 			CometPawn->SetThrustEnabled(false);
-			FRotator PlayerRot = UKismetMathLibrary::FindLookAtRotation(CometPawn->GetActorLocation(), GetActorLocation());
-			CometPawn->SetActorRotation(PlayerRot);
+		}
+	}
+}
+
+void ACometCompanion::OnCameraLockSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor != NULL)
+	{
+		ACometPawn* CometPawn = Cast<ACometPawn>(OtherActor);
+		if (CometPawn != NULL)
+		{
+			CometPawn->RequestLockOnActor(this, true);
+		}
+	}
+
+}
+
+void ACometCompanion::OnCameraLockSphereOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor != NULL)
+	{
+		ACometPawn* CometPawn = Cast<ACometPawn>(OtherActor);
+		if (CometPawn != NULL)
+		{
+			CometPawn->RequestLockOnActor(NULL, false);
 		}
 	}
 }
@@ -119,6 +150,11 @@ void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 	{
 		MoodComp->SetMoodTypeBool(MoodType, true);
 	}
+
+	BrakeShpere->DestroyComponent();
+	SyncSphere->DestroyComponent();
+	CameraLockSphere->DestroyComponent();
+	CompanionMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	OnSetFree(Liberator);
 }

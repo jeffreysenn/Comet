@@ -95,12 +95,6 @@ void UBeatComponent::RequestMatchBeat(ACometPawn* Requester)
 	if (bAllBeatsMatched)
 	{
 		OnAllBeatsMatched.Broadcast();
-		auto* SphereCollider = GetOwner()->FindComponentByClass<USphereComponent>();
-		if (SphereCollider)
-		{
-			SphereCollider->DestroyComponent();
-		}
-		DestroyComponent();
 	}
 }
 

@@ -179,7 +179,9 @@ private:
 
 	bool bThrustEnabled = true;
 
+	bool bShouldCamLockOnActor = false;
 
+	AActor* ActorToLockCam = nullptr;
 public:
 	// Begin AActor overrides
 	virtual void Tick(float DeltaSeconds) override;
@@ -188,6 +190,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RequestDash(float DeltaCharge);
+
+	void RequestLockOnActor(AActor* ActorToLock, bool bShouldLock);
 
 	/** Returns PlaneMesh subobject **/
 	FORCEINLINE class UStaticMeshComponent* GetPlaneMesh() const { return CometMesh; }
@@ -265,6 +269,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeMesh(int32 MeshIndex);
+
+	void LockCameraOnActor(AActor* ActorToLock);
 };
 
 

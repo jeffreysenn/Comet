@@ -19,6 +19,7 @@
 #include "CometCompanion.h"
 #include "SunCompanion.h"
 #include "MassComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 ACometPawn::ACometPawn()
@@ -122,7 +123,12 @@ void ACometPawn::Tick(float DeltaSeconds)
 		}
 	}
 
-	
+	// Lock camera on target actor
+	if (bShouldCamLockOnActor)
+	{
+		LockCameraOnActor(ActorToLockCam);
+	}
+
 }
 
 void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
@@ -137,6 +143,21 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 void ACometPawn::RequestDash(float DeltaCharge)
 {
 	DashCharged = FMath::Min(MaxDashCharge, DashCharged + DeltaCharge);
+}
+
+void ACometPawn::RequestLockOnActor(AActor* ActorToLock, bool bShouldLock)
+{
+	if (ActorToLock == NULL || !bShouldLock)
+	{
+		bShouldCamLockOnActor = false;
+		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
+	}
+	else if(bShouldLock && !bShouldCamLockOnActor)
+	{
+		bShouldCamLockOnActor = bShouldLock;
+	}
+
+	ActorToLockCam = ActorToLock;
 }
 
 
@@ -470,6 +491,20 @@ void ACometPawn::ChangeMesh(int32 MeshIndex)
 	{
 		CometMesh->SetStaticMesh(MassMeshArr[MeshIndex].StaticMesh);
 	}
+}
+
+void ACometPawn::LockCameraOnActor(AActor* ActorToLock)
+{
+	if (ActorToLock == NULL)
+	{
+		return;
+	}
+
+	// FVector RelativeLocation = GetActorTransform().InverseTransformPosition(ActorToLock->GetActorLocation());
+	FRotator WorldRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ActorToLock->GetActorLocation());
+	SpringArm->SetWorldRotation(WorldRotation);
+
+
 }
 
 
