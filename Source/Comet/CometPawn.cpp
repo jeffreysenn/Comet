@@ -79,10 +79,12 @@ void ACometPawn::Tick(float DeltaSeconds)
 	DeltaRotation.Yaw = CurrentYawSpeed * DeltaSeconds;
 	DeltaRotation.Roll = CurrentRollSpeed * DeltaSeconds;
 
+	// Stop abs pitch increase if greater than max pitch angle
 	if (FMath::Abs(GetActorRotation().Pitch) > MaxPitchAngle && FMath::Abs(GetActorRotation().Pitch + DeltaRotation.Pitch) > FMath::Abs(GetActorRotation().Pitch))
 	{
 		DeltaRotation.Pitch = 0;
 	}
+
 	// Rotate root
 	AddActorLocalRotation(DeltaRotation);
 
@@ -178,8 +180,6 @@ void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("Thrust", this, &ACometPawn::ThrustInput);
 	PlayerInputComponent->BindAxis("MoveUp", this, &ACometPawn::MoveUpInput);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACometPawn::MoveRightInput);
-	PlayerInputComponent->BindAxis("ThrustX", this, &ACometPawn::DodgeInput);
-	//PlayerInputComponent->BindAxis("Dash", this, &ACometPawn::DashInput);
 
 
 	PlayerInputComponent->BindAxis("MoveUp_Stick", this, &ACometPawn::MoveUpInput_Stick);
@@ -245,6 +245,10 @@ void ACometPawn::MoveUpInput(float Val)
 
 void ACometPawn::MoveRightInput(float Val)
 {
+	if (FMath::Abs(GetActorRotation().Pitch) > MaxTurnPitchAngle)
+	{
+		Val = Val * .02f;
+	}
 	// Target yaw speed is based on input
 	float TargetYawSpeed = (Val * YawSpeed);
 
@@ -347,25 +351,6 @@ void ACometPawn::DashInput()
 		break;
 	}
 
-}
-
-void ACometPawn::DodgeInput(float Val)
-{
-	// Target yaw speed is based on input
-	float TargetYawSpeed = (Val * DodgeSpeed);
-
-	// Smoothly interpolate to target yaw speed
-	CurrentYawSpeed = FMath::FInterpTo(CurrentYawSpeed, TargetYawSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
-
-	// Is there any left/right input?
-	const bool bIsTurning = FMath::Abs(Val) > 0.2f;
-
-	// If turning, yaw value is used to influence roll
-	// If not turning, roll to reverse current roll value.
-	float TargetRollSpeed = bIsTurning ? (CurrentYawSpeed * 0.5f) : (GetActorRotation().Roll * -2.f);
-
-	// Smoothly interpolate roll speed
-	CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetRollSpeed, GetWorld()->GetDeltaSeconds(), 2.f);
 }
 
 void ACometPawn::SyncBeat()

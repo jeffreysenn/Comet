@@ -96,6 +96,9 @@ protected:
 	UPROPERTY(Category = Movement, EditAnywhere)
 	float MaxPitchAngle = 85;
 
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float MaxTurnPitchAngle = 75;
+
 	/** Max forward speed */
 	UPROPERTY(Category = Pitch, EditAnywhere)
 	float MaxSpeed = 5000;
@@ -241,9 +244,6 @@ protected:
 
 	/** Bound to the Dust collection */
 	void DashInput();
-
-	/*Bound to the Dodge axis*/
-	void DodgeInput(float Val);
 
 	/** Bound to the sync action */
 	void SyncBeat();
