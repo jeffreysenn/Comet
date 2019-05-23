@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Engine/StaticMeshActor.h"
 #include "MoodComponent.h"
 
 #include "Crystal.generated.h"
 
 UCLASS()
-class COMET_API ACrystal : public AActor
+class COMET_API ACrystal : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	
@@ -18,9 +18,6 @@ public:
 	ACrystal();
 
 public:
-	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* CrystalMesh;
-
 	UPROPERTY(Category = Collision, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* AttractionSphere;
 
@@ -29,7 +26,7 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	 TArray<class UStaticMesh*> MeshArr;
+	 TArray<UStaticMesh*> MeshArr;
 
 	UPROPERTY(BlueprintReadOnly)
 	class AActor* Obtainer;
@@ -43,12 +40,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashCharge = 0.1f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MinMaxScale = FVector2D(8.f, 12.f);
+
 protected:
-	void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UFUNCTION()
 	void OnAttractionSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ShinePlease();
+
+	FVector GetRandomScale(float MinScale, float MaxScale);
 };

@@ -19,32 +19,33 @@ ACrystal::ACrystal()
 	PrimaryActorTick.bCanEverTick = false;
 
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere0"));
-	RootComponent = AttractionSphere;
+	AttractionSphere->SetupAttachment(RootComponent);
+	AttractionSphere->SetAbsolute(false, true, true);
 	AttractionSphere->InitSphereRadius(4000.f);
 	AttractionSphere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &ACrystal::OnAttractionSphereOverlapBegin);
 	AttractionSphere->SetMobility(EComponentMobility::Static);
 
-	CrystalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CrystalMesh0"));
-	CrystalMesh->SetupAttachment(RootComponent);
-	CrystalMesh->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
-	CrystalMesh->SetMobility(EComponentMobility::Static);
-
-
 	GlowBillboard = CreateDefaultSubobject<UMaterialBillboardComponent>(TEXT("GlowBillboard0"));
 	GlowBillboard->SetupAttachment(RootComponent);
+	GlowBillboard->SetAbsolute(false, true, true);
 }
 
-
-
-void ACrystal::BeginPlay()
+void ACrystal::OnConstruction(const FTransform& Transform)
 {
-	Super::BeginPlay();
+	Super::OnConstruction(Transform);
 
+	// Set random mesh at scale and rotation
 	int32 MeshIndex = FMath::RandRange(0, MeshArr.Num() - 1);
 	if (MeshArr.IsValidIndex(MeshIndex) && MeshArr[MeshIndex] != NULL)
 	{
-		CrystalMesh->SetStaticMesh(MeshArr[MeshIndex]);
+		GetStaticMeshComponent()->SetStaticMesh(MeshArr[MeshIndex]);
+
+		FVector RandomScale = GetRandomScale(MinMaxScale.X, MinMaxScale.Y);
+		GetStaticMeshComponent()->SetWorldScale3D(RandomScale);
+
+		FRotator RandomRotator = UKismetMathLibrary::RandomRotator(true);
+		GetStaticMeshComponent()->SetWorldRotation(RandomRotator);
 	}
 }
 
@@ -60,8 +61,8 @@ void ACrystal::OnAttractionSphereOverlapBegin(UPrimitiveComponent* OverlappedCom
 		{
 			if (MoodComp->HasMoodType(MoodType))
 			{
+				GetStaticMeshComponent()->SetVisibility(false);
 				SetActorEnableCollision(false);
-				CrystalMesh->SetVisibility(false);
 				ACometPawn* CometPawn = Cast<ACometPawn>(Obtainer);
 				if (CometPawn != NULL)
 				{
@@ -74,4 +75,10 @@ void ACrystal::OnAttractionSphereOverlapBegin(UPrimitiveComponent* OverlappedCom
 	}
 
 
+}
+
+FVector ACrystal::GetRandomScale(float MinScale, float MaxScale)
+{
+	float ScaleOneDimen = FMath::RandRange(MinScale, MaxScale);
+	return FVector(1,1,1) * ScaleOneDimen;
 }
