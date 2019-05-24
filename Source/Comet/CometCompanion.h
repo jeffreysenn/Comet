@@ -7,6 +7,8 @@
 #include "MoodComponent.h"
 #include "CometCompanion.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompanionDelegate);
+
 UCLASS()
 class COMET_API ACometCompanion : public AActor
 {
@@ -29,14 +31,19 @@ public:
 	UPROPERTY(Category = Collider, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* CameraLockSphere;
 
-
 	UPROPERTY(Category = Beat, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBeatComponent* BeatComponent;
+
+	UPROPERTY(Category = Billboard, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UMaterialBillboardComponent* MaterialBillboard;
 
 	bool bIsFree = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EMoodEnum MoodType;
+
+	UPROPERTY(BlueprintAssignable)
+	FCompanionDelegate OnCompanionSetFree;
 
 protected:
 	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
@@ -69,16 +76,17 @@ protected:
 	void RespondToBeatPlayed();
 
 	UFUNCTION(BlueprintCallable)
-	UNiagaraComponent* SpawnParticle(UNiagaraSystem* SystemTemplate);
+	virtual UNiagaraComponent* SpawnParticle(UNiagaraSystem* SystemTemplate);
 
 	UFUNCTION()
 	void RespondToAllBeatsMatched();
+
 
 public:	
 	UFUNCTION(BlueprintCallable)
 	void SetCometCompanionFree(AActor* Liberator);
 
-private:
 	UFUNCTION()
 	void DestoryNS(class UNiagaraComponent* NSToDestroy);
+
 };

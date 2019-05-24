@@ -10,6 +10,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "MoodComponent.h"
+#include "Components/MaterialBillboardComponent.h"
 #include "CometPawn.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -41,6 +42,9 @@ ACometCompanion::ACometCompanion()
 
 	BeatComponent = CreateDefaultSubobject<UBeatComponent>(TEXT("BeatComp0"));
 	BeatComponent->SetupAttachment(RootComponent);
+
+	MaterialBillboard = CreateDefaultSubobject<UMaterialBillboardComponent>(TEXT("MaterialBillboard0"));
+	MaterialBillboard->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -151,6 +155,7 @@ void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 	CameraLockSphere->DestroyComponent();
 	CompanionMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
+	OnCompanionSetFree.Broadcast();
 	OnSetFree(Liberator);
 }
 
