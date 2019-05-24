@@ -29,8 +29,6 @@ public:
 	UPROPERTY(Category = Collider, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* CameraLockSphere;
 
-	UPROPERTY(Category = Beat, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UNiagaraComponent* BeatNiagara;
 
 	UPROPERTY(Category = Beat, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBeatComponent* BeatComponent;
@@ -41,10 +39,11 @@ public:
 	EMoodEnum MoodType;
 
 protected:
-	bool bShouldSpawnBeatParticle = false;
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	class UNiagaraSystem* BeatParticleTemplate;
 
-	UPROPERTY(Category = Particle, EditAnywhere)
-	FVector2D ParticleSpriteSize = FVector2D(8.f, 10.f);
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	FLinearColor Colour = FLinearColor(1, 1, 1, 1);
 
 protected:
 	// Called when the game starts or when spawned
@@ -69,17 +68,17 @@ protected:
 	UFUNCTION()
 	void RespondToBeatPlayed();
 
+	UFUNCTION(BlueprintCallable)
+	UNiagaraComponent* SpawnParticle(UNiagaraSystem* SystemTemplate);
+
 	UFUNCTION()
 	void RespondToAllBeatsMatched();
 
-	//// Orbit actor around a orbit centre at axis and radius
-	//UFUNCTION(BlueprintCallable)
-	//void OrbitAroundActor(AActor* CentreActor, FVector Axis, float Radius, float AngleDeg);
-
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintCallable)
 	void SetCometCompanionFree(AActor* Liberator);
+
+private:
+	UFUNCTION()
+	void DestoryNS(class UNiagaraComponent* NSToDestroy);
 };

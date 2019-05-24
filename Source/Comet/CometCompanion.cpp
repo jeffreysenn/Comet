@@ -7,9 +7,12 @@
 #include "Components/SphereComponent.h"
 #include "BeatComponent.h"
 #include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "MoodComponent.h"
 #include "CometPawn.h"
 #include "Kismet/KismetMathLibrary.h"
+
 
 // Sets default values
 ACometCompanion::ACometCompanion()
@@ -38,9 +41,6 @@ ACometCompanion::ACometCompanion()
 
 	BeatComponent = CreateDefaultSubobject<UBeatComponent>(TEXT("BeatComp0"));
 	BeatComponent->SetupAttachment(RootComponent);
-
-	BeatNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BeatParticle0"));
-	BeatNiagara->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -48,34 +48,13 @@ void ACometCompanion::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BrakeShpere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnBrakeSphereOverlapBegin);
-
 	CameraLockSphere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnCameraLockSphereOverlapBegin);
 	CameraLockSphere->OnComponentEndOverlap.AddDynamic(this, &ACometCompanion::OnCameraLockSphereOverlapEnd);
 
-	BeatComponent->OnBeatPlayed.AddDynamic(this, &ACometCompanion::RespondToBeatPlayed);
-	BeatComponent->OnAllBeatsMatched.AddDynamic(this, &ACometCompanion::RespondToAllBeatsMatched);
+	BeatComponent->OnBeatPlayed.AddUniqueDynamic(this, &ACometCompanion::RespondToBeatPlayed);
+	BeatComponent->OnAllBeatsMatched.AddUniqueDynamic(this, &ACometCompanion::RespondToAllBeatsMatched);
 
-}
-
-// Called every frame
-void ACometCompanion::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (BeatNiagara != NULL)
-	{
-		// set Niagara particle size
-		FVector2D FinalSpriteSize = ParticleSpriteSize * GetActorScale().X;
-		BeatNiagara->SetNiagaraVariableVec2("User.SpriteSize", FinalSpriteSize);
-		BeatNiagara->SetNiagaraVariableBool("User.bShouldSpawn", bShouldSpawnBeatParticle);
-
-		if (bShouldSpawnBeatParticle)
-		{
-			bShouldSpawnBeatParticle = false;
-		}
-	}
-
+	BrakeShpere->OnComponentBeginOverlap.AddDynamic(this, &ACometCompanion::OnBrakeSphereOverlapBegin);
 }
 
 UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
@@ -127,7 +106,23 @@ void ACometCompanion::OnCameraLockSphereOverlapEnd(UPrimitiveComponent* Overlapp
 
 void ACometCompanion::RespondToBeatPlayed()
 {
-	bShouldSpawnBeatParticle = true;
+	SpawnParticle(BeatParticleTemplate);
+}
+
+UNiagaraComponent* ACometCompanion::SpawnParticle(UNiagaraSystem* SystemTemplate)
+{
+	if (SystemTemplate != NULL)
+	{
+		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(SystemTemplate, CompanionMesh, TEXT("None"), FVector::ZeroVector, CompanionMesh->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
+		BeatParticleComp->SetAbsolute(false, true, false);
+		BeatParticleComp->SetWorldRotation(CompanionMesh->GetComponentRotation());
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), Colour);
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(Colour.R, Colour.G, Colour.B, 0));
+
+		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometCompanion::DestoryNS);
+		return BeatParticleComp;
+	}
+	return NULL;
 }
 
 void ACometCompanion::RespondToAllBeatsMatched()
@@ -159,3 +154,9 @@ void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 	OnSetFree(Liberator);
 }
 
+void ACometCompanion::DestoryNS(UNiagaraComponent* NSToDestroy)
+{
+	if (!NSToDestroy) return;
+	if (!NSToDestroy->IsValidLowLevel()) return;
+	NSToDestroy->ConditionalBeginDestroy(); //instantly clears UObject out of memory
+}

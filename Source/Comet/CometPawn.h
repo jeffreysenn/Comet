@@ -32,6 +32,7 @@ struct FCometMassMeshStruct
 };
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSyncBeatDelegate);
 UCLASS(Config=Game)
 class COMET_API ACometPawn : public APawn
 {
@@ -59,14 +60,17 @@ public:
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
 
-	UPROPERTY(Category = Particle, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UNiagaraComponent* BeatNiagara;
-
 	UPROPERTY(Category = Audio, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAudioComponent* BeatAudio;
 
 	UPROPERTY(Category = Mass, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMassComponent* MassComp;
+
+	UPROPERTY(Category = Beat, BlueprintAssignable)
+	FSyncBeatDelegate OnRequestSync;
+
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	FLinearColor Colour = FLinearColor(0,1,1,1);
 
 
 protected:
@@ -137,8 +141,8 @@ protected:
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
 	bool bUseMotionControl = true;
 
-	UPROPERTY(Category = Particle, EditAnywhere)
-	FVector2D ParticleSpriteSize = FVector2D(6.f, 8.f);
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	class UNiagaraSystem* BeatParticleTemplate;
 
 private:
 	int32 CurrentMeshIndex = 0;
@@ -174,11 +178,6 @@ private:
 	EMovementEnum MovementState = EMovementEnum::ME_Normal;
 
 	float CurrentDeDashingTime = 0;
-
-	bool bShouldSpawnBeatParticle = false;
-
-	UPROPERTY()
-	class ACometCompanion* ClosestCompanion = nullptr;
 
 	bool bThrustEnabled = true;
 
@@ -217,7 +216,6 @@ public:
 	void SetThrustEnabled(bool bInEnabled);
 
 protected:
-
 	// Begin APawn overrides
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override; // Allows binding actions/axes to functions
@@ -259,8 +257,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeDash();
 
-	class ACometCompanion* FindClosestCompanion();
-
 	UFUNCTION()
 	void CheckChangeMesh(float Mass);
 
@@ -271,6 +267,11 @@ protected:
 	void ChangeMesh(int32 MeshIndex);
 
 	void LockCameraOnActor(AActor* ActorToLock);
+
+private:
+	UFUNCTION()
+	void DestoryNS(class UNiagaraComponent* NSToDestroy);
+
 };
 
 

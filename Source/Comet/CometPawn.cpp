@@ -16,6 +16,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "CometCompanion.h"
 #include "SunCompanion.h"
 #include "MassComponent.h"
@@ -45,10 +47,6 @@ ACometPawn::ACometPawn()
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);	// Attach the camera
 	Camera->bUsePawnControlRotation = false; // Don't rotate camera with controller
 
-
-	BeatNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BeatNiagara0"));
-	BeatNiagara->SetupAttachment(RootComponent);
-
 	BeatAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("BeatAudio0"));
 	BeatAudio->SetupAttachment(RootComponent);
 
@@ -58,6 +56,14 @@ ACometPawn::ACometPawn()
 	// Set handling parameters
 	OriginalPitch = PitchSpeed;
 	OriginalYaw = YawSpeed;
+}
+
+void ACometPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CurrentMeshIndex = 0;
+	ChangeMesh(CurrentMeshIndex);
 }
 
 void ACometPawn::Tick(float DeltaSeconds)
@@ -88,42 +94,10 @@ void ACometPawn::Tick(float DeltaSeconds)
 	// Rotate root
 	AddActorLocalRotation(DeltaRotation);
 
-
 	// Roll the comet mesh
 	float CurrentSpeed = CurrentForwardSpeed + CurrentDashSpeed;
 	// UE_LOG(LogTemp, Warning, TEXT("CurrentSpeed: %f"), CurrentSpeed);
 	RollForward(CometMesh, CurrentSpeed * RollMod);
-
-	// Update particle system user variables
-	if (BeatNiagara != NULL)
-	{
-		// Set Niagara spawning rotation quat
-		FQuat MeshRoationQuat = CometMesh->GetComponentRotation().Quaternion();
-		FQuat LocalMeshRotationQuat = BeatNiagara->GetComponentTransform().InverseTransformRotation(MeshRoationQuat);
-		BeatNiagara->SetNiagaraVariableQuat("User.SpawningQuat", LocalMeshRotationQuat);
-
-		//Set Niagara sprite size
-		FVector2D FinalSpriteSize = ParticleSpriteSize * GetActorScale().X;
-		BeatNiagara->SetNiagaraVariableVec2("User.SpriteSize", FinalSpriteSize);
-
-		if (ClosestCompanion != NULL)
-		{
-			BeatNiagara->SetNiagaraVariableBool("User.bUseLineAttractionForce", true);
-			FVector ClosestCompanionRelativeLocation = BeatNiagara->GetComponentTransform().InverseTransformPosition(ClosestCompanion->GetActorLocation());
-			BeatNiagara->SetNiagaraVariableVec3("User.ClosestCompanionLocation", ClosestCompanionRelativeLocation);
-		}
-		// If ClosestCompanion == NULL, do not apply line force
-		else
-		{
-			BeatNiagara->SetNiagaraVariableBool("User.bUseLineAttractionForce", false);
-		}
-
-		BeatNiagara->SetNiagaraVariableBool("User.bShouldSpawn", bShouldSpawnBeatParticle);
-		if (bShouldSpawnBeatParticle)
-		{
-			bShouldSpawnBeatParticle = false;
-		}
-	}
 
 	// Lock camera on target actor
 	if (bShouldCamLockOnActor)
@@ -163,13 +137,7 @@ void ACometPawn::RequestLockOnActor(AActor* ActorToLock, bool bShouldLock)
 }
 
 
-void ACometPawn::BeginPlay()
-{
-	Super::BeginPlay();
 
-	CurrentMeshIndex = 0;
-	ChangeMesh(CurrentMeshIndex);
-}
 
 void ACometPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -355,15 +323,7 @@ void ACometPawn::DashInput()
 
 void ACometPawn::SyncBeat()
 {
-	if (BeatNiagara != NULL)
-	{
-		ClosestCompanion = FindClosestCompanion();
-
-		// UE_LOG(LogTemp, Warning, TEXT("ClosestCompanion: %s"), ClosestCompanion != NULL ? *ClosestCompanion->GetName() : TEXT("Bullshit"));
-
-		bShouldSpawnBeatParticle = true;
-
-	}
+	OnRequestSync.Broadcast();
 
 	if (BeatAudio != NULL)
 	{
@@ -371,6 +331,16 @@ void ACometPawn::SyncBeat()
 		{
 			BeatAudio->Play();
 		}
+	}
+
+	if (BeatParticleTemplate != NULL)
+	{
+		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(BeatParticleTemplate, CometMesh, TEXT("None"), FVector::ZeroVector, CometMesh->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
+		BeatParticleComp->SetAbsolute(false, true, false);
+		BeatParticleComp->SetWorldRotation(CometMesh->GetComponentRotation());
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), Colour);
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(Colour.R, Colour.G, Colour.B, 0));
+		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometPawn::DestoryNS);
 	}
 
 	TArray<AActor*> OutOverlappingActors;
@@ -412,53 +382,6 @@ void ACometPawn::RollForward(USceneComponent* Comp, float RollAmount)
 	Comp->AddLocalRotation(DeltaRotation);
 }
 
-ACometCompanion* ACometPawn::FindClosestCompanion()
-{
-	TArray<AActor*> OutActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACometCompanion::StaticClass(), OutActors);
-	float MinDist = TNumericLimits<float>::Max();
-	ACometCompanion* MyClosestCompanion = nullptr;
-	for (AActor* Actor : OutActors)
-	{
-		ACometCompanion* Companion = Cast<ACometCompanion>(Actor);
-		if (Companion)
-		{
-			// Ignore the already freed companions
-			if (Companion->bIsFree)
-			{
-				continue;
-			}
-			// If the MyClosestCompanion is not set, set it to the sun
-			else if (MyClosestCompanion == nullptr && Companion->IsA(ASunCompanion::StaticClass()))
-			{
-				MyClosestCompanion = Companion;
-				continue;
-			}
-
-			else
-			{
-				float Dist = FVector::Dist(GetActorLocation(), Companion->GetActorLocation());
-				if (Dist < MinDist)
-				{
-					MinDist = Dist;
-					MyClosestCompanion = Companion;
-				}
-			}
-		}
-
-	}
-
-	// TODO: properly activate the sun beat
-	// if only the sun is left, activate the sun beat
-	if (MyClosestCompanion != NULL && MyClosestCompanion->IsA(ASunCompanion::StaticClass()))
-	{
-		ASunCompanion* SunCompanion = Cast<ASunCompanion>(MyClosestCompanion);
-		SunCompanion->SetBeatAndParticleActive(true);
-	}
-
-	return MyClosestCompanion;
-}
-
 void ACometPawn::CheckChangeMesh(float Mass)
 {
 	int32 NextIndex = CurrentMeshIndex + 1;
@@ -490,6 +413,13 @@ void ACometPawn::LockCameraOnActor(AActor* ActorToLock)
 	SpringArm->SetWorldRotation(WorldRotation);
 
 
+}
+
+void ACometPawn::DestoryNS(UNiagaraComponent* NSToDestroy)
+{
+	if (!NSToDestroy) return;
+	if (!NSToDestroy->IsValidLowLevel()) return;
+	NSToDestroy->ConditionalBeginDestroy(); //instantly clears UObject out of memory
 }
 
 

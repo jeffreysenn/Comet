@@ -18,6 +18,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void SetBeatAndParticleActive(bool bInActive);
+	void SetBeatActive(bool bInActive);
 	
 };

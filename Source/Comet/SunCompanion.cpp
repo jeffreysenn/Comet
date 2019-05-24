@@ -4,17 +4,15 @@
 #include "SunCompanion.h"
 
 #include "BeatComponent.h"
-#include "NiagaraComponent.h"
 
 void ASunCompanion::BeginPlay()
 {
 	ACometCompanion::BeginPlay();
 
-	SetBeatAndParticleActive(false);
+	SetBeatActive(false);
 }
 
-void ASunCompanion::SetBeatAndParticleActive(bool bInActive)
+void ASunCompanion::SetBeatActive(bool bInActive)
 {
 	BeatComponent->SetActive(bInActive);
-	BeatNiagara->SetActive(bInActive);
 }
