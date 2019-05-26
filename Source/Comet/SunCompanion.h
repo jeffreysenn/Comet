@@ -26,14 +26,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	virtual void RespondToOnSyncSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnSyncSphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-	virtual void RespondToOnSyncSphereOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void OnSyncSphereEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual UNiagaraComponent* SpawnParticle(UNiagaraSystem* SystemTemplate) override;
+	virtual void SetCometCompanionFree(AActor* Liberator) override;
 
-public:
-	void SetBeatActive(bool bInActive);
-	
 };

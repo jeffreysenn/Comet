@@ -28,7 +28,6 @@ ACometPawn::ACometPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-
 	RootCollider = CreateDefaultSubobject<USphereComponent>(TEXT("RootCollider0"));
 	RootCollider->InitSphereRadius(100.f);
 	RootCollider->SetNotifyRigidBodyCollision(true);

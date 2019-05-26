@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Engine/StaticMeshActor.h"
 #include "MoodComponent.h"
+
 #include "CometCompanion.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCompanionDelegate);
 
 UCLASS()
-class COMET_API ACometCompanion : public AActor
+class COMET_API ACometCompanion : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	
@@ -19,9 +20,6 @@ public:
 	ACometCompanion();
 
 public:
-	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* CompanionMesh;
-
 	UPROPERTY(Category = Collider, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* BrakeShpere;
 
@@ -62,6 +60,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	class UMoodComponent* FindLiberatorMoodComp(AActor* Liberator);
 
+public:	
 	UFUNCTION()
 	void OnBrakeSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -70,7 +69,6 @@ protected:
 
 	UFUNCTION()
 	void OnCameraLockSphereOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 
 	UFUNCTION()
 	void RespondToBeatPlayed();
@@ -81,10 +79,8 @@ protected:
 	UFUNCTION()
 	void RespondToAllBeatsMatched();
 
-
-public:	
 	UFUNCTION(BlueprintCallable)
-	void SetCometCompanionFree(AActor* Liberator);
+	virtual void SetCometCompanionFree(AActor* Liberator);
 
 	UFUNCTION()
 	void DestoryNS(class UNiagaraComponent* NSToDestroy);
