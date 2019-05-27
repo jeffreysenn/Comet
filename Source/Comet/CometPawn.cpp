@@ -332,40 +332,41 @@ void ACometPawn::SyncBeat()
 		}
 	}
 
+	FLinearColor ParticleColour = Colour;
+
+	TArray<AActor*> OutOverlappingActors;
+	GetOverlappingActors(OutOverlappingActors, AActor::StaticClass());
+	if (OutOverlappingActors.Num() > 0)
+	{
+		for (auto* OutOverlappingActor : OutOverlappingActors)
+		{
+			if (OutOverlappingActor) 
+			{
+				auto* BeatComponent = OutOverlappingActor->FindComponentByClass<UBeatComponent>();
+				if (BeatComponent)
+				{
+					if (BeatComponent->RequestMatchBeat(this))
+					{
+						ACometCompanion* Companion = Cast<ACometCompanion>(OutOverlappingActor);
+						if (Companion != NULL)
+						{
+							ParticleColour = Companion->GetColour();
+						}
+					}
+				}
+
+			}
+		}
+	}
+
 	if (BeatParticleTemplate != NULL)
 	{
 		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(BeatParticleTemplate, CometMesh, TEXT("None"), FVector::ZeroVector, CometMesh->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
 		BeatParticleComp->SetAbsolute(false, true, false);
 		BeatParticleComp->SetWorldRotation(CometMesh->GetComponentRotation());
-		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), Colour);
-		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(Colour.R, Colour.G, Colour.B, 0));
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), ParticleColour);
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(ParticleColour.R, ParticleColour.G, ParticleColour.B, 0));
 		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometPawn::DestoryNS);
-	}
-
-	TArray<AActor*> OutOverlappingActors;
-	GetOverlappingActors(OutOverlappingActors, AActor::StaticClass());
-	if (OutOverlappingActors.Num() == 0) { return; }
-	else
-	{
-		for (auto* OutOverlappingActor : OutOverlappingActors)
-		{
-			//auto* Companion = Cast<ACometCompanion>(OutOverlappingActor);
-			//if (Companion)
-			//{
-				//if (!Companion->bIsFree)
-				//{
-			if (OutOverlappingActor) 
-			{
-					auto* BeatComponent = OutOverlappingActor->FindComponentByClass<UBeatComponent>();
-					if (BeatComponent)
-					{
-						BeatComponent->RequestMatchBeat(this);
-					}
-
-			}
-				//}
-			//}
-		}
 	}
 }
 

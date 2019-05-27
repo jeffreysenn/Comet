@@ -75,7 +75,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	void RequestMatchBeat(class ACometPawn* Requester);
+	bool RequestMatchBeat(class ACometPawn* Requester);
 
 	FORCEINLINE class ACometPawn* GetRequestedPawn() const { return RequestedPawn; }
 

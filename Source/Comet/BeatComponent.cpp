@@ -69,18 +69,35 @@ void UBeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	TimeSinceLastLoopFinished += DeltaTime;
 }
 
-void UBeatComponent::RequestMatchBeat(ACometPawn* Requester)
+bool UBeatComponent::RequestMatchBeat(ACometPawn* Requester)
 {
 	RequestedPawn = Requester;
 
-	if (BeatsPtr.IsValidIndex(CurrentBeatIndex))
-	{
-		if (TimeSinceLastLoopFinished >= BeatsPtr[CurrentBeatIndex]->TimePoint - BeatsPtr[CurrentBeatIndex]->TimeWindowHalfLength
-			&& TimeSinceLastLoopFinished <= BeatsPtr[CurrentBeatIndex]->TimePoint + BeatsPtr[CurrentBeatIndex]->TimeWindowHalfLength)
-		{
-			BeatsPtr[CurrentBeatIndex]->bBeatMatched = true;
-		}
+	bool bMatched = false;
 
+	for (int32 BeatIndex = 0; BeatIndex < BeatsPtr.Num(); BeatIndex++)
+	{
+		if (BeatsPtr.IsValidIndex(BeatIndex))
+		{
+			if (TimeSinceLastLoopFinished >= BeatsPtr[BeatIndex]->TimePoint - BeatsPtr[BeatIndex]->TimeWindowHalfLength
+				&& TimeSinceLastLoopFinished <= BeatsPtr[BeatIndex]->TimePoint + BeatsPtr[BeatIndex]->TimeWindowHalfLength)
+			{
+				if (!BeatsPtr[BeatIndex]->bBeatMatched)
+				{
+					BeatsPtr[BeatIndex]->bBeatMatched = true;
+					bMatched = true;
+					break;
+				}
+			}
+		}
+	}
+
+
+	// Anti spamming code
+	if (!bMatched)
+	{
+		ResetBeatMatch();
+		return bMatched;
 	}
 
 	bool bAllBeatsMatched = true;
@@ -92,10 +109,13 @@ void UBeatComponent::RequestMatchBeat(ACometPawn* Requester)
 			break;
 		}
 	}
+
 	if (bAllBeatsMatched)
 	{
 		OnAllBeatsMatched.Broadcast();
 	}
+
+	return bMatched;
 }
 
 void UBeatComponent::ResetBeatMatch()
