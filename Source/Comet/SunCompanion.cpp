@@ -8,6 +8,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 ASunCompanion::ASunCompanion()
 {
@@ -22,6 +23,7 @@ ASunCompanion::ASunCompanion()
 	BeatComponent->SetAutoActivate(false);
 }
 
+
 void ASunCompanion::BeginPlay()
 {
 	ACometCompanion::BeginPlay();
@@ -30,6 +32,20 @@ void ASunCompanion::BeginPlay()
 	SyncSphere->OnComponentEndOverlap.AddDynamic(this, &ASunCompanion::OnSyncSphereEndOverlap);
 
 	BeatComponent->SetComponentTickEnabled(false);
+
+	TArray<ACometCompanion*> OtherCompanions = FindAllOtherCompanions();
+	for (ACometCompanion* Companion : OtherCompanions)
+	{
+		if (Companion != NULL)
+		{
+			Companion->OnCompanionSetFree.AddUniqueDynamic(this, &ASunCompanion::RespondToOnCompanionSetFree);
+		}
+	}
+
+	if (Colours.IsValidIndex(ColourIndex))
+	{
+		Colour = Colours[ColourIndex].ParticleColour;
+	}
 }
 
 void ASunCompanion::OnSyncSphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -48,16 +64,41 @@ void ASunCompanion::SetCometCompanionFree(AActor* Liberator)
 	if (bIsFree) { return; }
 	bIsFree = true;
 
-	UMoodComponent* MoodComp = FindLiberatorMoodComp(Liberator);
-	if (MoodComp)
-	{
-		MoodComp->SetMoodTypeBool(MoodType, true);
-	}
-
 	BrakeShpere->DestroyComponent();
 	SyncSphere->DestroyComponent();
 	CameraLockSphere->DestroyComponent();
 
 	OnCompanionSetFree.Broadcast();
 	OnSetFree(Liberator);
+}
+
+TArray<class ACometCompanion*> ASunCompanion::FindAllOtherCompanions()
+{
+	TArray<AActor*> OutFoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACometCompanion::StaticClass(), OutFoundActors);
+	TArray<ACometCompanion*> CompanionArr;
+	for (AActor* FoundActor: OutFoundActors)
+	{
+		if (!FoundActor->IsA(ASunCompanion::StaticClass()))
+		{
+			ACometCompanion* FoundCompanion = Cast<ACometCompanion>(FoundActor);
+			if (FoundCompanion != NULL)
+			{
+				CompanionArr.Add(FoundCompanion);
+			}
+		}
+	}
+	return CompanionArr;
+}
+
+void ASunCompanion::RespondToOnCompanionSetFree()
+{
+	UE_LOG(LogTemp, Warning, TEXT("A companion was set free!"));
+
+	ColourIndex++;
+
+	if (Colours.IsValidIndex(ColourIndex) && Colours.IsValidIndex(ColourIndex-1))
+	{
+		UpdateColour(Colours[ColourIndex - 1], Colours[ColourIndex]);
+	}
 }

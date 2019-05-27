@@ -6,9 +6,27 @@
 #include "CometCompanion.h"
 #include "SunCompanion.generated.h"
 
-/**
- * 
- */
+USTRUCT(BlueprintType)
+struct FSunCompanionColourStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DesaturationFraction = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MeshEmissive = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BillboardEmissive = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor ParticleColour = FLinearColor(1,1,1,1);
+
+	FSunCompanionColourStruct()
+	{
+	}
+};
 
 UCLASS()
 class COMET_API ASunCompanion : public ACometCompanion
@@ -18,9 +36,19 @@ class COMET_API ASunCompanion : public ACometCompanion
 public:
 	ASunCompanion();
 
+protected:
+	UPROPERTY(EditAnywhere)
+	TArray<FSunCompanionColourStruct> Colours;
+
+	int32 ColourIndex = 0;
+
 public:
 	UPROPERTY(Category = Particle, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UNiagaraComponent* NormalParticle;
+
+public:
+	UFUNCTION()
+	void RespondToOnCompanionSetFree();
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,5 +60,10 @@ protected:
 	virtual void OnSyncSphereEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	virtual void SetCometCompanionFree(AActor* Liberator) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateColour(FSunCompanionColourStruct OldColour, FSunCompanionColourStruct NewColour);
+
+	TArray<class ACometCompanion*> FindAllOtherCompanions();
 
 };
