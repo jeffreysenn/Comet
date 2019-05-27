@@ -102,7 +102,7 @@ TArray<class ACometCompanion*> ASunCompanion::FindAllOtherCompanions()
 
 void ASunCompanion::RespondToOnCompanionSetFree()
 {
-	UE_LOG(LogTemp, Warning, TEXT("A companion was set free!"));
+	// UE_LOG(LogTemp, Warning, TEXT("A companion was set free!"));
 
 	ColourIndex++;
 
