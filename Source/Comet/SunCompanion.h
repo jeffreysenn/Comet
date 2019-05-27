@@ -23,8 +23,24 @@ struct FSunCompanionColourStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor ParticleColour = FLinearColor(1,1,1,1);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor LightColour = FLinearColor(1, 1, 1, 1);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LightIntensity = 3;
+
 	FSunCompanionColourStruct()
 	{
+	}
+
+	FSunCompanionColourStruct(float InDesaturationFraction, float InMeshEmissive, float InBillboardEmissive, FLinearColor InParticleColour, FLinearColor InLightColour, float InLightIntensity)
+	{
+		DesaturationFraction = InDesaturationFraction;
+		MeshEmissive = InMeshEmissive;
+		BillboardEmissive = InBillboardEmissive;
+		ParticleColour = InParticleColour;
+		LightColour = InLightColour;
+		LightIntensity = InLightIntensity;
 	}
 };
 

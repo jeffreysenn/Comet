@@ -21,6 +21,15 @@ ASunCompanion::ASunCompanion()
 	NormalParticle->SetupAttachment(RootComponent);
 
 	BeatComponent->SetAutoActivate(false);
+
+	Colours =
+	{
+		FSunCompanionColourStruct(1, 4, 1, FLinearColor(0.501042,0.486314, 0.470609, 0.494000), FLinearColor(1.000000,0.984314,0.901961,1.000000), 3),
+		FSunCompanionColourStruct(0.3f, 10.f, 2.f, FLinearColor(1.000000,0.883333,0.300000,1.000000), FLinearColor(1.000000,0.968000,0.800000,1.000000), 10),
+		FSunCompanionColourStruct(0.1f, 15.f, 4, FLinearColor(1.000000,0.866667,0.200000,1.000000), FLinearColor(1.000000,0.950000,0.700000,1.000000), 15), 
+		FSunCompanionColourStruct(0.f, 20.f, 8.f, FLinearColor(1.000000,0.833333,0.000000,1.000000), FLinearColor(1.000000,0.936001,0.600000,1.000000), 20),
+		FSunCompanionColourStruct(-1.f, 30, 30, FLinearColor(1.000000,0.666667,0.000000,1.000000), FLinearColor(1.000000,0.916667,0.500000,1.000000), 30)
+	};
 }
 
 
