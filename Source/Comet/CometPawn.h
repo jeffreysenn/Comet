@@ -144,6 +144,15 @@ protected:
 	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
 	class UNiagaraSystem* BeatParticleTemplate;
 
+	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
+	float CollisionSpeedCoefficient = 0.8f;
+
+	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
+	float MinCollisionInterval = 0.1f;
+
+	float LastCollisionTime = 0;
+
+
 private:
 	int32 CurrentMeshIndex = 0;
 

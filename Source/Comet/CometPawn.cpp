@@ -110,9 +110,22 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
+	float HitTime = GetWorld()->GetTimeSeconds();
+
+	if (HitTime - LastCollisionTime > MinCollisionInterval)
+	{
 		// Deflect along the surface when we collide.
 		FRotator CurrentRotation = GetActorRotation();
 		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.5f));
+		CurrentForwardSpeed *= CollisionSpeedCoefficient;
+	}
+	else
+	{
+		CurrentForwardSpeed = 0;
+	}
+
+	LastCollisionTime = HitTime;
+
 }
 
 void ACometPawn::RequestDash(float DeltaCharge)
