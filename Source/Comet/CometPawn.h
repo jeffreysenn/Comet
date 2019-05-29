@@ -73,6 +73,8 @@ public:
 	FLinearColor Colour = FLinearColor(0,1,1,1);
 
 
+
+
 protected:
 	UPROPERTY(Category = Mesh, EditAnywhere, BlueprintReadWrite)
 	TArray<FCometMassMeshStruct> MassMeshArr;
@@ -150,7 +152,15 @@ protected:
 	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
 	float MinCollisionInterval = 0.1f;
 
+	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
+	class USoundBase* CollisionSound;
+
+	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AActor> CollisionNiagaraActor;
+
 	float LastCollisionTime = 0;
+
+	FVector LastHitImpactNormal;
 
 
 private:

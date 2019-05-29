@@ -118,6 +118,19 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 		FRotator CurrentRotation = GetActorRotation();
 		SetActorRotation(FQuat::Slerp(CurrentRotation.Quaternion(), HitNormal.ToOrientationQuat(), 0.5f));
 		CurrentForwardSpeed *= CollisionSpeedCoefficient;
+
+		if (CollisionSound != NULL)
+		{
+			UGameplayStatics::SpawnSoundAtLocation(this, CollisionSound, HitLocation);
+		}
+
+		if (CollisionNiagaraActor != NULL)
+		{
+			AActor* NiagaraActor = GetWorld()->SpawnActor<AActor>(CollisionNiagaraActor, HitLocation, UKismetMathLibrary::MakeRotFromZ(HitNormal));
+			const FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+			NiagaraActor->AttachToComponent(OtherComp, Rules);
+		}
+
 	}
 	else
 	{
@@ -125,6 +138,7 @@ void ACometPawn::NotifyHit(class UPrimitiveComponent* MyComp, class AActor* Othe
 	}
 
 	LastCollisionTime = HitTime;
+	
 
 }
 
