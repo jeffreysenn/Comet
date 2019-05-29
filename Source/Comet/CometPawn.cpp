@@ -227,6 +227,11 @@ void ACometPawn::ThrustInput(float Val)
 
 void ACometPawn::MoveUpInput(float Val)
 {
+	if (!bMoveUpEnabled)
+	{
+		Val = 0;
+	}
+
 	// Target pitch speed is based in input
 	float TargetPitchSpeed = (Val * PitchSpeed * -1.f);
 	
@@ -239,6 +244,11 @@ void ACometPawn::MoveUpInput(float Val)
 
 void ACometPawn::MoveRightInput(float Val)
 {
+	if (!bMoveRightEnabled)
+	{
+		Val = 0;
+	}
+
 	if (FMath::Abs(GetActorRotation().Pitch) > MaxTurnPitchAngle)
 	{
 		Val = Val * .02f;

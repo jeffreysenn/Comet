@@ -200,6 +200,10 @@ private:
 
 	bool bThrustEnabled = true;
 
+	bool bMoveUpEnabled = true;
+
+	bool bMoveRightEnabled = true;
+
 	bool bShouldCamLockOnActor = false;
 
 	AActor* ActorToLockCam = nullptr;
@@ -233,6 +237,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetThrustEnabled(bool bInEnabled);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMoveUpEnabled(bool bInEnabled) {bMoveRightEnabled = bInEnabled;}
+
+	UFUNCTION(BlueprintCallable)
+	void SetMoveRightEnabled(bool bInEnabled) {bMoveRightEnabled = bInEnabled;}
 
 protected:
 	// Begin APawn overrides
