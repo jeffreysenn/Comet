@@ -19,6 +19,11 @@ void ARotatingMesh::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (RotationRate.IsZero())
+	{
+		return;
+	}
+
 	// Compute new rotation
 	const FQuat OldRotation = GetActorQuat();
 	const FQuat DeltaRotation = (RotationRate * DeltaSeconds).Quaternion();
