@@ -239,7 +239,7 @@ public:
 	void SetThrustEnabled(bool bInEnabled);
 
 	UFUNCTION(BlueprintCallable)
-	void SetMoveUpEnabled(bool bInEnabled) {bMoveRightEnabled = bInEnabled;}
+	void SetMoveUpEnabled(bool bInEnabled) {bMoveUpEnabled = bInEnabled;}
 
 	UFUNCTION(BlueprintCallable)
 	void SetMoveRightEnabled(bool bInEnabled) {bMoveRightEnabled = bInEnabled;}
