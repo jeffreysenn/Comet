@@ -18,13 +18,15 @@ ACrystal::ACrystal()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
+
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere0"));
 	AttractionSphere->SetupAttachment(RootComponent);
 	AttractionSphere->SetAbsolute(false, true, true);
 	AttractionSphere->InitSphereRadius(4000.f);
 	AttractionSphere->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 	AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &ACrystal::OnAttractionSphereOverlapBegin);
-	AttractionSphere->SetMobility(EComponentMobility::Static);
+	//AttractionSphere->SetMobility(EComponentMobility::Static);
 
 	GlowBillboard = CreateDefaultSubobject<UMaterialBillboardComponent>(TEXT("GlowBillboard0"));
 	GlowBillboard->SetupAttachment(RootComponent);
@@ -46,6 +48,9 @@ void ACrystal::OnConstruction(const FTransform& Transform)
 
 		FRotator RandomRotator = UKismetMathLibrary::RandomRotator(true);
 		GetStaticMeshComponent()->SetWorldRotation(RandomRotator);
+
+		GetStaticMeshComponent()->SetMobility(EComponentMobility::Static);
+		AttractionSphere->SetMobility(EComponentMobility::Static);
 	}
 }
 
