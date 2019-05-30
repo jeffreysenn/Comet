@@ -162,7 +162,7 @@ void UPlayerParticleFollowerComponent::TickComponent(float DeltaTime, ELevelTick
 					
 					if (ActorsInWorld[g] && ActorsInWorld.IsValidIndex(g))
 					{
-						if (FVector::Dist(ActorsInWorld[g]->GetActorLocation(), GetOwner()->GetActorLocation()) < 2000.0f)
+						if (FVector::Dist(ActorsInWorld[g]->GetActorLocation(), GetOwner()->GetActorLocation()) < SpawnDistance)
 						{
 							CalculateSpawnPositions(ActorsInWorld[g]);
 
@@ -171,7 +171,7 @@ void UPlayerParticleFollowerComponent::TickComponent(float DeltaTime, ELevelTick
 					
 						
 
-						if (FVector::Dist(ActorsInWorld[g]->GetActorLocation(), GetOwner()->GetActorLocation()) > 4000.0f)
+						if (FVector::Dist(ActorsInWorld[g]->GetActorLocation(), GetOwner()->GetActorLocation()) > DestroyDistance)
 						{
 							ActorsInWorld[g]->Destroy();
 							ActorsInWorld.RemoveAt(g);
