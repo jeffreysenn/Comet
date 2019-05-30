@@ -67,44 +67,99 @@ void UPlayerParticleFollowerComponent::CalculateSpawnPositions(AActor * ActorTha
 		//FVector TEMP = FVector(ActorThatThePlayerIsIn->GetActorLocation().X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), 0, 0);
 		//FVector TEMP = FVector(ActorThatThePlayerIsIn->GetActorLocation().X + SquareByX(ActorThatThePlayerIsIn->GetActorScale.X, 3), ActorThatThePlayerIsIn->GetActorLocation().Y, ActorThatThePlayerIsIn->GetActorLocation().Z);
 		//SpawnPositionsInworld.Add(TEMP);
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
-		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Y + SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3), SpawnPositionsInworld[0].Z - SquareByX(ActorThatThePlayerIsIn->GetActorScale().X, 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X*100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X*100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z + (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Y + (ActorThatThePlayerIsIn->GetActorScale().X * 100), SpawnPositionsInworld[0].Z - (ActorThatThePlayerIsIn->GetActorScale().X * 100)));
+
+
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) *2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) *2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 2)));
+
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y, SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X, SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
+		SpawnPositionsInworld.Add(FVector(SpawnPositionsInworld[0].X - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Y + ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3), SpawnPositionsInworld[0].Z - ((ActorThatThePlayerIsIn->GetActorScale().X * 100) * 3)));
 	}
 	else
 	{
 		return;
 	}
-	
+	FMath::Pow(ActorThatThePlayerIsIn->GetActorScale().X, 3);
 }
 
 float UPlayerParticleFollowerComponent::SquareByX(float ValueToSquare, int32 X)
 {
 	float ReturnValue = ValueToSquare;
-	for (int32 i = 1; i < X; i++)
+	for (int32 i = 0; i < X; i++)
 	{
 		ReturnValue *= ValueToSquare;
 	}
@@ -132,7 +187,7 @@ void UPlayerParticleFollowerComponent::TickComponent(float DeltaTime, ELevelTick
 						{
 							if (ActorsInWorld[g] && ActorsInWorld.IsValidIndex(g))
 							{
-								if (FVector::Dist(SpawnPositionsInworld[i], ActorsInWorld[g]->GetActorLocation()) < 10.0f)
+								if (FVector::Dist(SpawnPositionsInworld[i], ActorsInWorld[g]->GetActorLocation()) < 1000.0f)
 								{
 									count++;
 								}
@@ -200,7 +255,17 @@ void UPlayerParticleFollowerComponent::TickComponent(float DeltaTime, ELevelTick
 		}
 		else
 		{
-			return;
+			ActorsInWorld.Empty();
+			ActorsInWorld.Add(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetOwner()->GetActorLocation(), FRotator(0, 0, 0)));
+
+
+
+			CalculateSpawnPositions(ActorsInWorld[0]);
+
+			for (int32 i = 1; i < SpawnPositionsInworld.Num(); i++)
+			{
+				ActorsInWorld.Add(GetWorld()->SpawnActor<AActor>(ActorToSpawn, SpawnPositionsInworld[i], FRotator(0, 0, 0)));
+			}
 		}
 	}
 	else

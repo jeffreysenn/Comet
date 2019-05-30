@@ -22,11 +22,11 @@ public:
 
 	//Used for determening how close the player needs to be before an actor spawns.
 	UPROPERTY(EditAnywhere)
-		float SpawnDistance = 2000.0f;
+		float SpawnDistance = 16000.0f;
 	
 	//Used for determening how far away the player needs to be before a spawned actor is destroyed.
 	UPROPERTY(EditAnywhere)
-		float DestroyDistance = 4000.0f;
+		float DestroyDistance = 24000.0f;
 
 	
 
