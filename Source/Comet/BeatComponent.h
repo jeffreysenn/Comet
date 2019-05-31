@@ -61,6 +61,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Beat)
 	float LoopLength;
 
+	UPROPERTY(EditAnywhere, Category = Beat)
+	float VolumnMultiplier = 0.3f;
+
 private:
 	TArray<FBeatStruct*> BeatsPtr;
 
@@ -78,6 +81,9 @@ public:
 	bool RequestMatchBeat(class ACometPawn* Requester);
 
 	FORCEINLINE class ACometPawn* GetRequestedPawn() const { return RequestedPawn; }
+
+	UFUNCTION(BlueprintCallable)
+	void PlayBeat();
 
 protected:
 	virtual void BeginPlay() override;

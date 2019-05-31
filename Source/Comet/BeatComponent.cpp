@@ -11,6 +11,15 @@ UBeatComponent::UBeatComponent(const FObjectInitializer & ObjectInitializer)
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UBeatComponent::PlayBeat()
+{
+	if (Sound != NULL)
+	{
+		SetVolumeMultiplier(VolumnMultiplier);
+		Play();
+	}
+}
+
 void UBeatComponent::BeginPlay()
 {
 	Super::BeginPlay();
