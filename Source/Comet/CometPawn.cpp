@@ -361,14 +361,8 @@ void ACometPawn::SyncBeat()
 {
 	OnRequestSync.Broadcast();
 
-	if (BeatAudio != NULL)
-	{
-		if (BeatAudio->Sound)
-		{
-			BeatAudio->Play();
-		}
-	}
 
+	int32 BeatSwitchIndex = 0;
 	FLinearColor ParticleColour = Colour;
 
 	TArray<AActor*> OutOverlappingActors;
@@ -384,15 +378,29 @@ void ACometPawn::SyncBeat()
 				{
 					if (BeatComponent->RequestMatchBeat(this))
 					{
+						BeatSwitchIndex = 1;
 						ACometCompanion* Companion = Cast<ACometCompanion>(OutOverlappingActor);
 						if (Companion != NULL)
 						{
 							ParticleColour = Companion->GetColour();
 						}
 					}
+					else
+					{
+						BeatSwitchIndex = 2;
+					}
 				}
 
 			}
+		}
+	}
+
+	if (BeatAudio != NULL)
+	{
+		if (BeatAudio->Sound)
+		{
+			BeatAudio->SetIntParameter(FName("Switch"), BeatSwitchIndex);
+			BeatAudio->Play();
 		}
 	}
 
