@@ -37,6 +37,11 @@ void ACrystal::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+	if (GetStaticMeshComponent()->Mobility == EComponentMobility::Static)
+	{
+		return;
+	}
+
 	// Set random mesh at scale and rotation
 	int32 MeshIndex = FMath::RandRange(0, MeshArr.Num() - 1);
 	if (MeshArr.IsValidIndex(MeshIndex) && MeshArr[MeshIndex] != NULL)
