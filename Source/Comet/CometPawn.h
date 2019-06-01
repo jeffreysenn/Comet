@@ -66,6 +66,9 @@ public:
 	UPROPERTY(Category = Mass, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMassComponent* MassComp;
 
+	UPROPERTY(Category = Mass, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UMoodComponent* MoodComp;
+
 	UPROPERTY(Category = Beat, BlueprintAssignable)
 	FSyncBeatDelegate OnRequestSync;
 
@@ -146,6 +149,9 @@ protected:
 	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
 	class UNiagaraSystem* BeatParticleTemplate;
 
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	class UNiagaraSystem* BeatParticleToSunTemplate;
+
 	UPROPERTY(Category = CollisionBehaviour, EditAnywhere, BlueprintReadWrite)
 	float CollisionSpeedCoefficient = 0.8f;
 
@@ -206,7 +212,12 @@ private:
 
 	bool bShouldCamLockOnActor = false;
 
+	UPROPERTY()
 	AActor* ActorToLockCam = nullptr;
+
+	UPROPERTY()
+	AActor* SunActor = nullptr;
+
 public:
 	// Begin AActor overrides
 	virtual void Tick(float DeltaSeconds) override;

@@ -13,6 +13,7 @@
 #include "Components/MaterialBillboardComponent.h"
 #include "CometPawn.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SunCompanion.h"
 
 
 // Sets default values
@@ -57,6 +58,13 @@ void ACometCompanion::BeginPlay()
 
 	BeatComponent->OnBeatPlayed.AddUniqueDynamic(this, &ACometCompanion::RespondToBeatPlayed);
 	BeatComponent->OnAllBeatsMatched.AddUniqueDynamic(this, &ACometCompanion::RespondToAllBeatsMatched);
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASunCompanion::StaticClass(), OutActors);
+	if (OutActors.IsValidIndex(0))
+	{
+		SunActor = OutActors[0];
+	}
 }
 
 UMoodComponent* ACometCompanion::FindLiberatorMoodComp(AActor* Liberator)
@@ -114,13 +122,78 @@ void ACometCompanion::RespondToBeatPlayed()
 
 UNiagaraComponent* ACometCompanion::SpawnParticle(UNiagaraSystem* SystemTemplate)
 {
-	if (SystemTemplate != NULL)
+	bool bShouldSpawnDirectionalParticle = true;
+	// if not freed
+	if (LiberatorPawn == NULL) { bShouldSpawnDirectionalParticle = false; }
+	// if is sun
+	else if (this->IsA(ASunCompanion::StaticClass()))
+	{
+		bShouldSpawnDirectionalParticle = false;
+	}
+	// if there is no sun
+	else if (SunActor == NULL)
+	{
+		bShouldSpawnDirectionalParticle = false;
+	}
+	else
+	{
+		ASunCompanion* SunCompanion = Cast<ASunCompanion>(SunActor);
+		if (SunCompanion != NULL)
+		{
+			// should not spawn directional particle when sun is free
+			bShouldSpawnDirectionalParticle = !SunCompanion->bIsFree;
+		}
+		else
+		{
+			bShouldSpawnDirectionalParticle = false;
+		}
+	}
+
+	// check if pawn has all moods
+	if(bShouldSpawnDirectionalParticle)
+	{
+		UMoodComponent* MoodComp = FindLiberatorMoodComp(LiberatorPawn);
+		if (MoodComp == NULL)
+		{
+			bShouldSpawnDirectionalParticle = false;
+		}
+		else
+		{
+			for (auto& Elem : MoodComp->MoodMap)
+			{
+				if (!Elem.Value)
+				{
+					bShouldSpawnDirectionalParticle = false;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!bShouldSpawnDirectionalParticle && SystemTemplate != NULL)
 	{
 		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(SystemTemplate, GetStaticMeshComponent(), TEXT("None"), FVector::ZeroVector, GetStaticMeshComponent()->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
 		BeatParticleComp->SetAbsolute(false, true, false);
 		BeatParticleComp->SetWorldRotation(GetStaticMeshComponent()->GetComponentRotation());
 		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), Colour);
 		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(Colour.R, Colour.G, Colour.B, 0));
+
+		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometCompanion::DestoryNS);
+		return BeatParticleComp;
+	}
+	else if (DirectionalBeatParticleTemplate != NULL)
+	{
+		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(DirectionalBeatParticleTemplate, GetStaticMeshComponent(), TEXT("None"), FVector::ZeroVector, GetStaticMeshComponent()->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
+		BeatParticleComp->SetAbsolute(false, true, false);
+		BeatParticleComp->SetWorldRotation(GetStaticMeshComponent()->GetComponentRotation());
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), Colour);
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(Colour.R, Colour.G, Colour.B, 0));
+
+		if (SunActor != NULL)
+		{
+			FVector SunLocalLoc = GetStaticMeshComponent()->GetComponentTransform().InverseTransformPosition(SunActor->GetActorLocation());
+			BeatParticleComp->SetNiagaraVariableVec3(TEXT("User.ForceEnd"), SunLocalLoc);
+		}
 
 		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometCompanion::DestoryNS);
 		return BeatParticleComp;
@@ -142,6 +215,8 @@ void ACometCompanion::SetCometCompanionFree(AActor* Liberator)
 {
 	if (bIsFree) { return; }
 	bIsFree = true;
+
+	LiberatorPawn = Liberator;
 
 	UMoodComponent* MoodComp = FindLiberatorMoodComp(Liberator);
 	if (MoodComp)

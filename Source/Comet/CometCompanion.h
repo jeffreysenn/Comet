@@ -48,7 +48,17 @@ protected:
 	class UNiagaraSystem* BeatParticleTemplate;
 
 	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
+	class UNiagaraSystem* DirectionalBeatParticleTemplate;
+
+
+	UPROPERTY(Category = Particle, EditAnywhere, BlueprintReadWrite)
 	FLinearColor Colour = FLinearColor(1, 1, 1, 1);
+
+	UPROPERTY()
+	AActor* LiberatorPawn = nullptr;
+
+	UPROPERTY()
+	AActor* SunActor = nullptr;
 
 protected:
 	// Called when the game starts or when spawned

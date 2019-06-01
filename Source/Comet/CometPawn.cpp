@@ -13,6 +13,7 @@
 #include "CometPlayerController.h"
 #include "CometCompanion.h"
 #include "BeatComponent.h"
+#include "MoodComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "NiagaraComponent.h"
@@ -52,6 +53,8 @@ ACometPawn::ACometPawn()
 	MassComp = CreateDefaultSubobject<UMassComponent>(TEXT("MassComp0"));
 	MassComp->OnMassChanged.AddDynamic(this, &ACometPawn::CheckChangeMesh);
 
+	MoodComp = CreateDefaultSubobject<UMoodComponent>(TEXT("MoodComp0"));
+
 	// Set handling parameters
 	OriginalPitch = PitchSpeed;
 	OriginalYaw = YawSpeed;
@@ -63,6 +66,13 @@ void ACometPawn::BeginPlay()
 
 	CurrentMeshIndex = 0;
 	ChangeMesh(CurrentMeshIndex);
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASunCompanion::StaticClass(), OutActors);
+	if (OutActors.IsValidIndex(0))
+	{
+		SunActor = OutActors[0];
+	}
 }
 
 void ACometPawn::Tick(float DeltaSeconds)
@@ -404,7 +414,37 @@ void ACometPawn::SyncBeat()
 		}
 	}
 
-	if (BeatParticleTemplate != NULL)
+	bool bShouldUseDirectionalBeatParticle = true;
+	if (SunActor == NULL)
+	{
+		bShouldUseDirectionalBeatParticle = false;
+	}
+	else
+	{
+		ASunCompanion* SunCompanion = Cast<ASunCompanion>(SunActor);
+		if (SunCompanion != NULL)
+		{
+			bShouldUseDirectionalBeatParticle = !SunCompanion->bIsFree;
+		}
+		else
+		{
+			bShouldUseDirectionalBeatParticle = false;
+		}
+	}
+
+	if (bShouldUseDirectionalBeatParticle)
+	{
+		for (auto& Elem: MoodComp->MoodMap)
+		{
+			if (!Elem.Value)
+			{
+				bShouldUseDirectionalBeatParticle = false;
+				break;
+			}
+		}
+	}
+
+	if (!bShouldUseDirectionalBeatParticle && BeatParticleTemplate != NULL)
 	{
 		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(BeatParticleTemplate, CometMesh, TEXT("None"), FVector::ZeroVector, CometMesh->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
 		BeatParticleComp->SetAbsolute(false, true, false);
@@ -413,6 +453,21 @@ void ACometPawn::SyncBeat()
 		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(ParticleColour.R, ParticleColour.G, ParticleColour.B, 0));
 		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometPawn::DestoryNS);
 	}
+	else if(BeatParticleToSunTemplate != NULL)
+	{
+		UNiagaraComponent* BeatParticleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(BeatParticleToSunTemplate, CometMesh, TEXT("None"), FVector::ZeroVector, CometMesh->GetComponentRotation(), EAttachLocation::KeepRelativeOffset, false);
+		BeatParticleComp->SetAbsolute(false, true, false);
+		BeatParticleComp->SetWorldRotation(CometMesh->GetComponentRotation());
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.StartColour"), ParticleColour);
+		BeatParticleComp->SetNiagaraVariableLinearColor(TEXT("User.EndColour"), FLinearColor(ParticleColour.R, ParticleColour.G, ParticleColour.B, 0));
+		if (SunActor != NULL)
+		{
+			FVector SunLocalLoc = CometMesh->GetComponentTransform().InverseTransformPosition(SunActor->GetActorLocation());
+			BeatParticleComp->SetNiagaraVariableVec3(TEXT("User.ForceEnd"), SunLocalLoc);
+		}
+		BeatParticleComp->OnSystemFinished.AddUniqueDynamic(this, &ACometPawn::DestoryNS);
+	}
+	
 }
 
 void ACometPawn::ReloadLevel()
