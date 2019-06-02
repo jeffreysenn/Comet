@@ -472,7 +472,7 @@ void ACometPawn::SyncBeat()
 
 void ACometPawn::ReloadLevel()
 {
-	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+	UGameplayStatics::OpenLevel(this, "MainMenu", false);
 }
 
 void ACometPawn::RollForward(USceneComponent* Comp, float RollAmount)
