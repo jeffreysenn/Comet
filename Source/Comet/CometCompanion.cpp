@@ -240,3 +240,28 @@ void ACometCompanion::DestoryNS(UNiagaraComponent* NSToDestroy)
 	NSToDestroy->ConditionalBeginDestroy(); //instantly clears UObject out of memory
 }
 
+bool ACometCompanion::AreAllCompanionsFree()
+{
+	if (LiberatorPawn == NULL)
+	{
+		return false;
+	}
+
+	UMoodComponent* MoodComp = FindLiberatorMoodComp(LiberatorPawn);
+	if (MoodComp == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		for (auto& Elem : MoodComp->MoodMap)
+		{
+			if (!Elem.Value)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+

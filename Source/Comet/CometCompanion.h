@@ -96,4 +96,7 @@ public:
 	void DestoryNS(class UNiagaraComponent* NSToDestroy);
 
 	FORCEINLINE FLinearColor GetColour() { return Colour; }
+
+	UFUNCTION(BlueprintCallable)
+	bool AreAllCompanionsFree();
 };
