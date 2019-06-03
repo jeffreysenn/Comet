@@ -12,11 +12,6 @@
 
 ASunCompanion::ASunCompanion()
 {
-	GetStaticMeshComponent()->SetMobility(EComponentMobility::Static);
-	BrakeShpere->SetMobility(EComponentMobility::Static);
-	SyncSphere->SetMobility(EComponentMobility::Static);
-	CameraLockSphere->SetMobility(EComponentMobility::Static);
-
 	NormalParticle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NormalParticle0"));
 	NormalParticle->SetupAttachment(RootComponent);
 
