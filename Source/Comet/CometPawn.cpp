@@ -237,10 +237,7 @@ void ACometPawn::ThrustInput(float Val)
 
 void ACometPawn::MoveUpInput(float Val)
 {
-	if (bInvertedAxis)
-	{
-		Val = -Val;
-	}
+
 
 	if (!bMoveUpEnabled)
 	{
@@ -305,6 +302,12 @@ void ACometPawn::MoveRightInput_Gyro(float Val)
 void ACometPawn::MoveUpInput_Stick(float Val)
 {
 	if (bUseMotionControl) { return; }
+
+	if (bInvertedAxis)
+	{
+		Val = -Val;
+	}
+
 	MoveUpInput(Val);
 }
 
