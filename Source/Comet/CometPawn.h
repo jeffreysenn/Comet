@@ -109,8 +109,8 @@ protected:
 	float MaxTurnPitchAngle = 75;
 
 	/** Max forward speed */
-	UPROPERTY(Category = Pitch, EditAnywhere)
-	float MaxSpeed = 5000;
+	UPROPERTY(Category = Movement, EditAnywhere)
+	float MaxSpeed = 10000.0f;
 
 	/** Min forward speed */
 	UPROPERTY(Category = Yaw, EditAnywhere)
