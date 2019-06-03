@@ -212,6 +212,8 @@ private:
 
 	bool bShouldCamLockOnActor = false;
 
+	bool bInvertedAxis = false;
+
 	UPROPERTY()
 	AActor* ActorToLockCam = nullptr;
 
@@ -254,6 +256,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetMoveRightEnabled(bool bInEnabled) {bMoveRightEnabled = bInEnabled;}
+
+	UFUNCTION(BlueprintCallable)
+	void SetInvertedAxis(bool bShouldInvert) { bInvertedAxis = bShouldInvert; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool GetInvertedAxis() { return bInvertedAxis; }
 
 protected:
 	// Begin APawn overrides

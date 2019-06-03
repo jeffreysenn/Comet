@@ -237,10 +237,16 @@ void ACometPawn::ThrustInput(float Val)
 
 void ACometPawn::MoveUpInput(float Val)
 {
+	if (bInvertedAxis)
+	{
+		Val = -Val;
+	}
+
 	if (!bMoveUpEnabled)
 	{
 		Val = 0;
 	}
+	
 
 	// Target pitch speed is based in input
 	float TargetPitchSpeed = (Val * PitchSpeed * -1.f);
